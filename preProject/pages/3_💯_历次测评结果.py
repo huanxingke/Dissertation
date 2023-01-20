@@ -10,31 +10,29 @@ import streamlit as st
 import numpy as np
 import requests
 
+from components.CookieManager import CookieManager
+from utils.page_header import pageHeader
+
 
 # 使 matplotlib 支持中文
 mpl.rcParams["font.sans-serif"] = ["SimHei"]
 mpl.rcParams["axes.unicode_minus"] = False
 
 
+# -------------------- cookie 管理器 -------------------- #
+cookie_manager = CookieManager()
+
 # -------------------- 页眉 -------------------- #
 # 页面设置
 st.set_page_config(page_title="历次测评结果", page_icon="💯")
-if not st.session_state.get("analyse_config"):
-    st.session_state.analyse_config = {}
-# 页面标题
-header = st.header("💯 历次测评结果")
-username = st.session_state.get("username")
-if username:
-    subheader = st.subheader(f"欢迎🎉 {username}")
-# 分割线
-st.markdown("---")
+pageHeader(header_value="💯 历次测评结果", cookie_manager=cookie_manager)
 
 
 # -------------------- 评估开始 -------------------- #
 # 获取题库
 @st.cache
 def getQuestions():
-    tiku_url = "https://rawcdn.githack.com/huanxingke/Dissertation/7961470650c0f09bdfd720b4510d55f8141bc587/preProject/static/data/questions.json"
+    tiku_url = "https://raw.githubusercontent.com/huanxingke/Dissertation/master/preProject/static/data/questions.json"
     questions = requests.get(url=tiku_url).json(strict=False)
     return questions
 

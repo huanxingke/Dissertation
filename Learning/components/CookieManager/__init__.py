@@ -86,7 +86,7 @@ class CookieManager(object):
 def hideComponent(component_name="cookie_manager"):
     st.components.v1.html(html="""
     <head>
-        <script type="text/javascript" src="https://rawcdn.githack.com/huanxingke/Dissertation/e36805537818540cd0aa36364eadecfbeb6bf623/Learning/static/js/JQuery.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     </head>
     <body>
         <script>

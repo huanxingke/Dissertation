@@ -45,7 +45,7 @@ def Validation(func):
             hideComponent()
             return response
         except Exception as error:
-            return {"code": -100, "msg": "Error!", "error": str(error)}
+            return {"code": -100, "msg": "Error: %s" % str(error)}
 
     return wrapper
 
@@ -86,7 +86,7 @@ class CookieManager(object):
 def hideComponent(component_name="cookie_manager"):
     st.components.v1.html(html="""
     <head>
-        <script type="text/javascript" src="https://rawcdn.githack.com/huanxingke/Dissertation/7961470650c0f09bdfd720b4510d55f8141bc587/preProject/static/js/JQuery.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     </head>
     <body>
         <script>
