@@ -1,0 +1,4 @@
+numpy
+pydeck
+pandas
+requests
