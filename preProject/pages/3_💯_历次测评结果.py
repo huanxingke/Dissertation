@@ -34,7 +34,7 @@ st.markdown("---")
 # 获取题库
 @st.cache
 def getQuestions():
-    tiku_url = "https://rawcdn.githack.com/huanxingke/Dissertation/e36805537818540cd0aa36364eadecfbeb6bf623/preProject/data/questions.json"
+    tiku_url = "https://rawcdn.githack.com/huanxingke/Dissertation/7961470650c0f09bdfd720b4510d55f8141bc587/preProject/static/data/questions.json"
     questions = requests.get(url=tiku_url).json(strict=False)
     return questions
 
