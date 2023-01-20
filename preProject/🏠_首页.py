@@ -1,5 +1,7 @@
-from components.CookieManager import CookieManager
 import streamlit as st
+import requests
+
+from components.CookieManager import CookieManager
 
 
 # -------------------- 页眉 -------------------- #
@@ -14,18 +16,13 @@ if username:
 st.markdown("---")
 
 
-# -------------------- 页眉 -------------------- #
-st.markdown("""
-### 关于本程序
-- 学校：华南理工大学
-- 学院：化学与化工学院
-- 年级：2019级
-- 专业：能源化学工程
-- 毕设：化工类企业环境事故应急预案演练计算机模拟仿真系统开发（含知识考试和过程仿真）
-- 姓名：李文韬
-    - Github：https://github.com/huanxingke
-    - 联系方式：201930191473@mail.scut.edu.cn
-- 导师：方利国
-    - Github：https://github.com/gzlgfang
-    - 联系方式：lgfang@scut.edu.cn
-""")
+# -------------------- README.md -------------------- #
+@st.cache
+def getREADME():
+    readme_url = "https://rawcdn.githack.com/huanxingke/Dissertation/275477ae504f415e87935db3e1dd242fd8af32e8/README.md"
+    readme = requests.get(url=readme_url).text
+    return readme
+
+
+markdown_readme = getREADME()
+st.markdown(markdown_readme)
