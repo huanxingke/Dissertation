@@ -19,10 +19,11 @@ st.markdown("---")
 # -------------------- README.md -------------------- #
 @st.cache
 def getREADME():
-    readme_url = "https://rawcdn.githack.com/huanxingke/Dissertation/275477ae504f415e87935db3e1dd242fd8af32e8/README.md"
-    readme = requests.get(url=readme_url).text
+    readme_url = "https://rawcdn.githack.com/huanxingke/Dissertation/97020cab37b05e56bece23ad92b5450e85179a09/README.md"
+    readme = requests.get(url=readme_url).text.strip()
     return readme
 
 
-markdown_readme = getREADME()
-st.markdown(markdown_readme)
+with st.spinner("Loading ReadMe.md..."):
+    markdown_readme = getREADME()
+    st.markdown(markdown_readme)
