@@ -1,3 +1,4 @@
+from components.CookieManager import CookieManager
 import streamlit as st
 
 
