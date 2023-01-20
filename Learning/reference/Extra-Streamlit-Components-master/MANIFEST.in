@@ -1,1 +1,0 @@
-recursive-include extra_streamlit_components/*/frontend/build *
