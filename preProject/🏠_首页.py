@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 
-from components.StreamlitWSLocalstorage import injectWebsocketCode, getOrCreateUID
 from components.CookieManager import CookieManager
 from utils.page_header import pageHeader
 
@@ -26,13 +25,3 @@ def getREADME():
 with st.spinner("Loading ReadMe.md..."):
     markdown_readme = getREADME()
     st.markdown(markdown_readme)
-
-conn = injectWebsocketCode(hostPort='linode.liquidco.in', uid=getOrCreateUID())
-
-st.write('setting into localStorage')
-ret = conn.setLocalStorageVal(key='k1', val='v1')
-st.write('ret: ' + ret)
-
-st.write('getting from localStorage')
-ret = conn.getLocalStorageVal(key='k1')
-st.write('ret: ' + ret)
