@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import requests
 
@@ -25,3 +27,11 @@ def getREADME():
 with st.spinner("Loading ReadMe.md..."):
     markdown_readme = getREADME()
     st.markdown(markdown_readme)
+
+
+if os.path.exists("123.txt"):
+    with open("123.txt", "r") as fp:
+        st.write(fp.read())
+else:
+    with open("123.txt", "w") as fp:
+        fp.write("123")

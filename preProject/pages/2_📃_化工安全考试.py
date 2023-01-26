@@ -39,9 +39,11 @@ def getQuestions():
 
 # 重置试卷设置
 def initExamConfig():
-    st.session_state.exam_config["rnd_seed"] = int(time.time())
-    st.session_state.exam_config["finished"] = False
-    st.session_state.exam_config["answers"] = dict()
+    cookie_manager.set("exam_config", {
+        "rnd_seed": int(time.time()),
+        "finished": False,
+        "answers": dict()
+    })
 
 
 # 组卷
@@ -266,20 +268,20 @@ with st.spinner("正在加载题库..."):
     tiku = getQuestions()
 st.markdown("> 【考试说明】本试卷共有40道题目，其中：单选题20×2分/题，不定项10×4分/题，判断题10×2分/题，共计100分。")
 # 获取试卷设置
-rnd_seed = st.session_state.exam_config.get("rnd_seed")
-finished = st.session_state.exam_config.get("finished")
-# 设置组卷随机值
-if not rnd_seed:
-    initExamConfig()
-# 重置试卷设置按钮
-st.button("重新组卷", key="make_a_test_paper", on_click=initExamConfig)
-# 题库随机数显示
-st.write("【题库随机数：%s】" % st.session_state.exam_config.get("rnd_seed"))
-# 如果是新组的卷子或者已经查看过答案的卷子
-# 则进行组卷
-# 初始化容器
-exam_empty_placeholder = st.empty()
-if not finished:
-    makeATestPaper()
+exam_config = cookie_manager.get("exam_config")
+if exam_config and exam_config.get("code") == 200:
+    # 重置试卷设置按钮
+    st.button("重新组卷", key="make_a_test_paper", on_click=initExamConfig)
+    rnd_seed = exam_config.get("value").get("rnd_seed")
+    # 题库随机数显示
+    st.write("【题库随机数：%s】" % rnd_seed)
+    # 如果是新组的卷子或者已经查看过答案的卷子
+    # 则进行组卷
+    # 初始化容器
+    exam_empty_placeholder = st.empty()
+    # if not finished:
+    #     makeATestPaper()
+    # else:
+    #     correctingTestPaper()
 else:
-    correctingTestPaper()
+    initExamConfig()
