@@ -54,5 +54,5 @@ class SimpleChat(WebSocket):
 
 clients = dict()
 
-server = WebSocketServer('0.0.0.0', 8001, SimpleChat)
+server = WebSocketServer('0.0.0.0', 8005, SimpleChat)
 server.serve_forever()
