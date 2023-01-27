@@ -19,7 +19,7 @@ class SimpleChat(WebSocket):
             if 'cmd' in obj and obj['cmd'] == 'echo':
                 self.send_message(self.data)
         except:
-            print ('exception in handle, ignoring')
+            print('exception in handle, ignoring')
 
         for client in clients[self.uid]:
             if client != self:

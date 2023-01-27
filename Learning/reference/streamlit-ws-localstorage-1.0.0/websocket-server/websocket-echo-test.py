@@ -1,17 +1,10 @@
 import asyncio
-import ssl
-
-import certifi
-import websocket
 import websockets
 
 
 def main():
-    ssl_context = ssl.create_default_context()
-    ssl_context.load_verify_locations(certifi.where())
-
     async def query(future):
-        async with websockets.connect("wss://127.0.0.1:8001/?uid=21", ssl=ssl_context) as ws:
+        async with websockets.connect("ws://localhost:8005/?uid=84651289465") as ws:
             await ws.send('{"cmd":"echo","msg":"hi4"}')
             response = await ws.recv()
             print('response: ', response)
