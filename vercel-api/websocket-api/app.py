@@ -21,6 +21,7 @@ def handle_error(err_msg):
         <h1>Error!</h1>
         <h2>{err_msg}</h2>
         <h2>{request.url}</h2>
+        <h2>By HuanXingke</h2>
         """
     else:
         return {"code": -1, "msg": str(err_msg)}
