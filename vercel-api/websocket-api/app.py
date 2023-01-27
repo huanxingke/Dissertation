@@ -3,7 +3,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/home")
 def home():
     if request.method == "GET":
         return "This is HuanXingke's Vercel API for dissertation."
