@@ -15,7 +15,15 @@
       "dest": "vercel-api/websocket-api/app.py"
     },
     {
+      "src": "/websocket",
+      "dest": "vercel-api/websocket-api/app.py"
+    },
+    {
       "src": "/common/(.*)",
+      "dest": "vercel-api/common-api/app.py"
+    },
+    {
+      "src": "/common",
       "dest": "vercel-api/common-api/app.py"
     }
   ]
