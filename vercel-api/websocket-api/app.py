@@ -3,7 +3,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route("/home")
+@app.route("/")
 def home():
     if request.method == "GET":
         return "This is HuanXingke's Vercel API for dissertation."
@@ -20,6 +20,7 @@ def handle_error(err_msg):
         return f"""
         <h1>Error!</h1>
         <h2>{err_msg}</h2>
+        <h2>{request.url}</h2>
         """
     else:
         return {"code": -1, "msg": str(err_msg)}
