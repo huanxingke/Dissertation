@@ -1,14 +1,22 @@
 {
   "builds": [
     {
-      "src": "vercel-api/app.py",
+      "src": "vercel-api/websocket-api/app.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "vercel-api/common-api/app.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "vercel-api/app.py"
+      "src": "/websocket/(.*)",
+      "dest": "vercel-api/websocket-api/app.py"
+    },
+    {
+      "src": "/common/(.*)",
+      "dest": "vercel-api/common-api/app.py"
     }
   ]
 }
