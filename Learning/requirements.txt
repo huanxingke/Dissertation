@@ -2,3 +2,5 @@ numpy
 pydeck
 pandas
 requests
+websockets===10.3
+simple-websocket-server===0.4.2
