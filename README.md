@@ -10,7 +10,3 @@
 - 导师：方利国
     - Github：https://github.com/gzlgfang
     - 联系方式：lgfang@scut.edu.cn
-
-### 使用的免费云平台
-- Streamlit：https://share.streamlit.io/
-- Vercel：https://vercel.com/
