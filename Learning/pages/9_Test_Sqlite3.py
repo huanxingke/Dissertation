@@ -1,5 +1,6 @@
 # coding=utf8
 import sqlite3
+import os
 
 import streamlit as st
 
@@ -90,4 +91,16 @@ class Database(object):
 
 
 db = Database()
-db.insert(table="finished", data=["daxingshuiku", "20230128"])
+date_exist = db.select(
+    table="finished",
+    key="*",
+    items=[
+        ("tablename", "daxingshuiku"),
+        ("datetime", "20230128")
+    ]
+)
+if date_exist:
+    st.write("已有数据, 无需重复采集!")
+else:
+    st.write("无数据!")
+st.write(os.path.abspath("./pw.s3db"))
