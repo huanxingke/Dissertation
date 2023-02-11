@@ -2,12 +2,11 @@ import streamlit as st
 
 
 # -------------------- 页眉 -------------------- #
-def pageHeader(header_value, cookie_manager, subheader_value=None):
-    # 用户名
-    username = None
-    username_cookie = cookie_manager.get("username")
-    if username_cookie and username_cookie.get("code") == 200:
-        username = username_cookie.get("value")
+def pageHeader(header_value, subheader_value=None):
+    # 设置应用会话
+    if not st.session_state.get("cookie"):
+        st.session_state.cookie = {}
+    username = st.session_state.cookie.get("chemical-username")
     # 页面标题
     header = st.header(header_value)
     # 页面副标题

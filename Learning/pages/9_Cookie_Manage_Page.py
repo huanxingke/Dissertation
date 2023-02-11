@@ -60,6 +60,17 @@ code = """
             }
         }
         
+        //生成txt并下载
+        function download(filename, text) {
+            var element = window.top.document.createElement("a");
+            element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
+            element.setAttribute("download", filename);
+            element.style.display = "none";
+            window.top.document.body.appendChild(element);
+            element.click();
+            window.top.document.body.removeChild(element);
+        }
+        
         //新建按钮
         function createButton(label, id, beforeNode, func) {
             //防止重复创建
@@ -113,6 +124,7 @@ code = """
         var cookie_string = Base64.encode(JSON.stringify($.cookie()));
         textarea_space.val(cookie_string);
         textarea_space.attr("value", cookie_string);
+        
         //在textarea下方创建复制按钮
         var copy_button = createButton("复制", "copy_button", textarea_space, function(){
             //保证cookie_string最新
@@ -120,9 +132,36 @@ code = """
             //复制
             copy(cookie_string);
         })
+        //再创建一个下载按钮
+        var download_button = createButton("下载", "download_button", copy_button, function(){
+            //保证cookie_string最新
+            cookie_string = Base64.encode(JSON.stringify($.cookie()));
+            //下载
+            download("Chemical-Cookie-" + new Date().getTime() + ".txt", cookie_string);
+        })
+        
         //input_textarea下方设置一个确定按钮
         var confirm_button = createButton("确定", "confirm_button", input_textarea_space, function(){
             alert("已尝试设置会话！")
+        })
+        //再创建一个覆盖按钮
+        var rewrite_button = createButton("覆盖", "rewrite_button", confirm_button, function(){
+            if (confirm("确定覆盖cookie吗？")) {
+                try {
+                    var input_cookie_string = input_textarea_space.val();
+                    var cookie_json = JSON.parse(Base64.decode(input_cookie_string));
+                    for (var key in cookie_json) {
+                        $.cookie(key, cookie_json[key], { expires: 365, path: "/" });
+                        console.log(key + "=" + $.cookie(key));
+                    }
+                    alert("已覆盖！请复制最新cookie以设置会话！")
+                } catch(err) {
+                    console.log(err)
+                    alert("覆盖失败！请检查粘贴的字符串是否有误！")
+                }
+            } else {
+                alert("已取消覆盖！请重新执行复制与会话设置操作！")
+            }
         })
     </script>
 </body>
