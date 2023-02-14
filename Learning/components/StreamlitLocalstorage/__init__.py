@@ -61,7 +61,8 @@ connect();
 </script>
         """
     components.html(code, height=0)
-    time.sleep(1)       # Without sleep there are problems
+    # Without sleep there are problems
+    time.sleep(1)
     return WebsocketClient(hostPort, uid)
 
 
