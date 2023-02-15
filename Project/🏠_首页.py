@@ -49,6 +49,12 @@ def insertPasswordJS():
             //获取 password-input 元素
             var password_div = root_document.find("label:contains([坚果云]应用密码)").parent().parent();
             var password_input = password_div.find("input");
+            
+            //判断以上获取的元素是否存在, 不存在则刷新一下页面
+            if (css_button.length == 0 || password_input.length == 0) {
+                console.log("reloading...")
+                window.location.reload()
+            }
 
             //隐藏本组件
             parent.css("display", "none");
