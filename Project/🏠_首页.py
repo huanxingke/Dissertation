@@ -76,8 +76,11 @@ def insertPasswordJS():
 
 
 def showUser():
-    jgy = JianGuoYunClient(username=username, password=password)
-    login_jgy = jgy.login()
+    if st.session_state.get("jgy") is None:
+        jgy = JianGuoYunClient(username=username, password=password)
+        login_jgy = jgy.login()
+    else:
+        login_jgy = {"status": 200}
     if login_jgy["status"] == 200:
         st.session_state.user = user
         st.session_state.jgy = jgy
@@ -95,19 +98,18 @@ def showUser():
         st.error(f"连接坚果云盘失败：{login_jgy['error']}")
 
 
-if st.session_state.get("jgy") is not None:
-    user = cm.get("user")
-    if user and user.get("code") == 200:
-        user = json.loads(base64.b64decode(user["value"]).decode())
-        username = user["username"]
-        password = user["password"]
+user = cm.get("user")
+if user and user.get("code") == 200:
+    user = json.loads(base64.b64decode(user["value"]).decode())
+    username = user["username"]
+    password = user["password"]
+    showUser()
+else:
+    username = st.text_input(label="输入账号：", key="username")
+    password = st.text_input(label="输入应用密码：", key="password")
+    if st.button("确定"):
+        user = {
+            "username": username,
+            "password": password,
+        }
         showUser()
-    else:
-        username = st.text_input(label="输入账号：", key="username")
-        password = st.text_input(label="输入应用密码：", key="password")
-        if st.button("确定"):
-            user = {
-                "username": username,
-                "password": password,
-            }
-            showUser()
