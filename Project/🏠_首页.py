@@ -80,6 +80,7 @@ def showUser():
         jgy = JianGuoYunClient(username=username, password=password)
         login_jgy = jgy.login()
     else:
+        jgy = st.session_state.jgy
         login_jgy = {"status": 200}
     if login_jgy["status"] == 200:
         st.session_state.user = user
