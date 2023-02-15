@@ -6,7 +6,6 @@ import streamlit as st
 from components.CookieManager import CookieManager, JSCookieManager, refreshPage
 from components.Webdav import JianGuoYunClient
 
-
 cm = CookieManager()
 
 
@@ -53,7 +52,7 @@ def insertPasswordJS():
 
             //隐藏本组件
             parent.css("display", "none");
-        
+
             //获取密码
             var password = JSON.parse(Base64.decode($.cookie("user"))).password;
             //先隐藏密码
@@ -96,18 +95,19 @@ def showUser():
         st.error(f"连接坚果云盘失败：{login_jgy['error']}")
 
 
-user = cm.get("user")
-if user and user.get("code") == 200:
-    user = json.loads(base64.b64decode(user["value"]).decode())
-    username = user["username"]
-    password = user["password"]
-    showUser()
-else:
-    username = st.text_input(label="输入账号：", key="username")
-    password = st.text_input(label="输入应用密码：", key="password")
-    if st.button("确定"):
-        user = {
-            "username": username,
-            "password": password,
-        }
+if st.session_state.get("jgy") is not None:
+    user = cm.get("user")
+    if user and user.get("code") == 200:
+        user = json.loads(base64.b64decode(user["value"]).decode())
+        username = user["username"]
+        password = user["password"]
         showUser()
+    else:
+        username = st.text_input(label="输入账号：", key="username")
+        password = st.text_input(label="输入应用密码：", key="password")
+        if st.button("确定"):
+            user = {
+                "username": username,
+                "password": password,
+            }
+            showUser()

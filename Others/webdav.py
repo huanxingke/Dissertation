@@ -2,6 +2,7 @@ from Webdav import JianGuoYunClient
 
 
 jgy = JianGuoYunClient(username="1519657825@qq.com", password="apcdwi4j8zc82vv9")
+jgy.login()
 text = "我的蓝奏云"
 up_res = jgy.upload(content=text.encode(), filename="2.txt")
 print(up_res)

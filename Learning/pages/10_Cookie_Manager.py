@@ -1,6 +1,5 @@
+import base64
 import re
-
-import streamlit as st
 
 
 def CookieManager(key, value="", delete=False, expires=365, senseless=True):
@@ -9,11 +8,9 @@ def CookieManager(key, value="", delete=False, expires=365, senseless=True):
     if isStr(key):
         # 键前后不能留有空白字符
         key = key.strip()
+        # 以 base64 储存
+        value = base64.b64encode(str(value).encode()).decode()
         if not delete:
-            # 设置应用会话
-            if not st.session_state.get("cookie"):
-                st.session_state.cookie = {}
-            st.session_state.cookie[key] = value
             # 储存 cookie
             code = """
             <head>
@@ -35,9 +32,6 @@ def CookieManager(key, value="", delete=False, expires=365, senseless=True):
             </body>
             """ % (key, value, expires)
         else:
-            # 从应用会话中删除
-            if st.session_state.get("cookie") and key in st.session_state.cookie:
-                del st.session_state.cookie[key]
             # 删除 cookie
             code = """
             <head>
@@ -70,7 +64,7 @@ def CookieManager(key, value="", delete=False, expires=365, senseless=True):
                 //隐藏本组件
                 var parent = $(window.frameElement).parent();
                 parent.css("display", "none");
-                alert("Cookie键只能为非空字符串！")
+                alert("Cookie键和值只能为非空字符串！")
             </script>
         </body>"""
         st.components.v1.html(html=code, height=0)

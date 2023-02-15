@@ -3,11 +3,20 @@ from .webdav4Mod.client import Client
 
 class JianGuoYunClient(object):
     def __init__(self, username, password):
-        self.client = Client(
-            base_url="https://dav.jianguoyun.com/dav/",
-            auth=(username, password)
-        )
-        self.client.mkdir("我的坚果云/EmergencySystemData")
+        self.username = username
+        self.password = password
+        self.client = None
+
+    def login(self):
+        try:
+            self.client = Client(
+                base_url="https://dav.jianguoyun.com/dav/",
+                auth=(self.username, self.password)
+            )
+            self.client.mkdir("我的坚果云/EmergencySystemData")
+            return {"status": 200}
+        except Exception as err:
+            return {"status": -1, "error": str(err)}
 
     def upload(self, content, filename):
         """上传一个文件
