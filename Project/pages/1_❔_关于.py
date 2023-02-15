@@ -4,11 +4,13 @@ import streamlit as st
 import requests
 
 
-work_path = os.path.abspath(os.path.dirname(os.getcwd()))
-st.write(work_path)
-readme_md = os.path.join(".", "README.md")
-st.write(os.path.exists(readme_md))
+if os.environ.get("USERDOMAIN") == "HUANXINGKE":
+    work_path = os.path.abspath(os.path.dirname(os.getcwd()))
+else:
+    work_path = "."
 
 
 # -------------------- README.md -------------------- #
-# st.markdown(markdown_readme)
+readme_md = os.path.join(work_path, "README.md")
+with open(readme_md, "r", encoding="utf-8") as fp:
+    st.markdown(fp.read())
