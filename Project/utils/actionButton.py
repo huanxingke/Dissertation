@@ -40,6 +40,7 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
             var MainMenu = root_document.find("#MainMenu");
             if (root_document.find("#%s").length > 0) {
                 var action_a = root_document.find("#%s");
+                $(action_a).attr("style", "color:%s;text-decoration:none");
                 $(action_a).attr("href", "%s");
                 $(action_a).text("%s")
             } else {
@@ -56,6 +57,6 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
             parent.css("display", "none");
         </script>
     </body>
-    """ % (action_id, action_id, action_href, action_text, action_color, action_id, action_href, action_text, action_func)
+    """ % (action_id, action_id, action_color, action_href, action_text, action_color, action_id, action_href, action_text, action_func)
     # 执行脚本
     st.components.v1.html(html=code, height=0)

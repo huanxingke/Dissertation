@@ -30,7 +30,8 @@ def showUserInfo():
     if not auto_input:
         # ** 保存数据于本地 ** #
         JSCookieManager(key="userinfo", value=json.dumps(userinfo))
-        addActionButton(action_id="userinfo-action", action_text=f"{student_name}，欢迎您！", action_href="./个人信息")
+        show_name = userinfo["student_name"] if len(userinfo["student_name"]) > 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
+        addActionButton(action_id="userinfo-action", action_text=f"欢迎，{show_name}", action_href="./个人信息")
         # ** 同步数据至云端 ** #
         if jgy is not None:
             uploadUserInfo()
@@ -45,7 +46,8 @@ def showUserInfo():
         st.markdown(f"**班级**：{student_class}")
         st.markdown(f"**指导老师**：{student_teacher_name}")
         clear = st.button("清除个人信息")
-        addActionButton(action_id="userinfo-action", action_text=f"{student_name}，欢迎您！", action_href="./个人信息")
+        show_name = userinfo["student_name"] if len(userinfo["student_name"]) > 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
+        addActionButton(action_id="userinfo-action", action_text=f"欢迎，{show_name}", action_href="./个人信息")
         # ** 同步数据至云端 ** #
         if not cloud_input and jgy is not None:
             uploadUserInfo()
@@ -56,7 +58,7 @@ def showUserInfo():
             if st.session_state.get("userinfo"):
                 del st.session_state.userinfo
             JSCookieManager(key="userinfo", delete=True)
-            addActionButton(action_id="userinfo-action", action_text="游客，欢迎您！", action_href="./个人信息")
+            addActionButton(action_id="userinfo-action", action_text="欢迎，游客", action_href="./个人信息")
             if jgy is not None:
                 with st.spinner("正在删除云端个人信息..."):
                     delete_res = jgy.delete("userinfo")

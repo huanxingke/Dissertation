@@ -1,3 +1,6 @@
+"""
+chemical-eps: Chemical Emergency Plan System
+"""
 import base64
 import time
 import json
@@ -101,7 +104,7 @@ def disconnect():
         del st.session_state.user
     # 从本地 cookie 中移除
     JSCookieManager(key="user", delete=True)
-    addActionButton(action_id="jgy-action", action_text="【坚果云未连接】", action_color="orange", action_href="./首页")
+    addActionButton(action_id="jgy-action", action_text="【云×】", action_color="orange", action_href="./首页")
 
 
 def showUser():
@@ -129,7 +132,7 @@ def showUser():
         st.success("已成功连接至坚果云盘！")
         st.text_input(label="[坚果云]账户：", key="show_username", disabled=True, value=username)
         st.text_input(label="[坚果云]应用密码：", key="show_password", disabled=True)
-        addActionButton(action_id="jgy-action", action_text="【坚果云已连接】", action_color="orange", action_href="./首页")
+        addActionButton(action_id="jgy-action", action_text="【云√】", action_color="green", action_href="./首页")
         # 14.以 cookie 形式保存用户配置
         JSCookieManager(key="user", value=json.dumps(user))
         # 15.插入 js 控制密码密/明文切换
@@ -141,6 +144,7 @@ def showUser():
                 disconnect()
                 # 18.刷新页面
                 refreshPage()
+        showActionInfo()
     # 10.若登录失败
     else:
         # 11.提示登录失败
