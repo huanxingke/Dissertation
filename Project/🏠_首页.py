@@ -6,6 +6,13 @@ import streamlit as st
 
 from components.CookieManager import CookieManager, JSCookieManager, refreshPage
 from components.Webdav import JianGuoYunClient
+from utils.actionButton import addActionButton
+from utils.showActionInfo import showActionInfo
+
+# ---------- Start:每页基础配置 ---------- #
+showActionInfo()
+st.markdown("### 🏠 首页")
+# ---------- End:每页基础配置 ---------- #
 
 
 # 控制密码密/明文的脚本
@@ -94,6 +101,7 @@ def disconnect():
         del st.session_state.user
     # 从本地 cookie 中移除
     JSCookieManager(key="user", delete=True)
+    addActionButton(action_id="jgy-action", action_text="【坚果云未连接】", action_color="orange", action_href="./首页")
 
 
 def showUser():
@@ -121,16 +129,18 @@ def showUser():
         st.success("已成功连接至坚果云盘！")
         st.text_input(label="[坚果云]账户：", key="show_username", disabled=True, value=username)
         st.text_input(label="[坚果云]应用密码：", key="show_password", disabled=True)
+        addActionButton(action_id="jgy-action", action_text="【坚果云已连接】", action_color="orange", action_href="./首页")
         # 14.以 cookie 形式保存用户配置
         JSCookieManager(key="user", value=json.dumps(user))
         # 15.插入 js 控制密码密/明文切换
         insertPasswordJS()
         # 16.提供登出选项
         if st.button("断开连接"):
-            # 17.断开连接
-            disconnect()
-            # 18.刷新页面
-            refreshPage()
+            with st.spinner("正在断开连接..."):
+                # 17.断开连接
+                disconnect()
+                # 18.刷新页面
+                refreshPage()
     # 10.若登录失败
     else:
         # 11.提示登录失败
@@ -139,14 +149,10 @@ def showUser():
         disconnect()
         # 13.如果是自动登录的, 就刷新页面
         if auto_input:
-            with st.spinner("即将刷新页面..."):
-                for i in range(2):
-                    time.sleep(1)
-                refreshPage()
+            refreshPage()
 
 
 st.markdown("""
-### 🏠 首页
 - 由于Streamlit暂无原生的持久化储存api，\
 且课题要求不能使用自己部署的服务器，\
 因此本程序采用 cookie + 免费云盘[坚果云]云储存的方式进行数据储存。
@@ -157,6 +163,7 @@ st.markdown("""
 足够本系统进行数据云储存，如果您本身也在用坚果云，建议另外注册一个坚果云账号以供本系统使用。
 """)
 
+# ** 判断是否是自动登录 ** #
 auto_input = False
 # 1.首先实例化双向的 cookie 管理器
 cm = CookieManager()
@@ -176,7 +183,8 @@ else:
     # 4.提示输入坚果云账户配置
     username = st.text_input(label="输入账号：", key="username")
     password = st.text_input(label="输入应用密码：", key="password")
-    if st.button("确定"):
+    confirm = st.button("确定")
+    if confirm:
         user = {
             "username": username,
             "password": password,

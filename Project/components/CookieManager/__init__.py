@@ -1,5 +1,6 @@
 import datetime
 import base64
+import time
 import re
 import os
 
@@ -185,4 +186,10 @@ def refreshPage():
             window.top.location.reload()
         </script>
     </body>"""
-    st.components.v1.html(html=code, height=0)
+    with st.spinner("即将刷新页面..."):
+        waits = 0
+        for i in range(2):
+            time.sleep(1)
+            waits += 1
+        if waits >= 2:
+            st.components.v1.html(html=code, height=0)
