@@ -18,7 +18,7 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                     if (user == undefined && userinfo == undefined) {
                         return alert("无需注销！");
                     }
-                    if (confirm("确定注销吗？这将清除所有本地cookie！") == true){ 
+                    if (confirm("确定注销吗？这将清除所有本地cookie并断开坚果云连接！") == true){ 
                         $.removeCookie("user", { path: "/"});
                         $.removeCookie("userinfo", { path: "/"});
                         alert("已注销！");

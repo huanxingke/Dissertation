@@ -1,5 +1,7 @@
 numpy
+jieba
 pandas
+gensim
 webdav4
 requests
 matplotlib

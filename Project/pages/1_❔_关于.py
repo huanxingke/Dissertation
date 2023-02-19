@@ -3,20 +3,19 @@ import os
 import streamlit as st
 import requests
 
-from utils.showActionInfo import showActionInfo
+from utils.initUserConfig import initUserConfig
 
 # ---------- Start:每页基础配置 ---------- #
-showActionInfo()
+st.set_page_config(page_title="关于", page_icon="❔")
 st.markdown("### ❔ 关于")
+init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #
+# 等待初始化完毕
+if init_result:
+    # ---------- 以下为页面自定义部分 ---------- #
 
-# 判断应用环境并选择路径
-if os.environ.get("USERDOMAIN") == "HUANXINGKE":
-    work_path = os.path.abspath(os.path.dirname(os.getcwd()))
-else:
-    work_path = "."
-
-# -------------------- README.md -------------------- #
-readme_md = os.path.join(work_path, "README.md")
-with open(readme_md, "r", encoding="utf-8") as fp:
-    st.markdown(fp.read())
+    # 加载 README.md
+    with st.spinner("正在加载本站信息..."):
+        readme_md = os.path.join(st.session_state.work_path, "README.md")
+        with open(readme_md, "r", encoding="utf-8") as fp:
+            st.markdown(fp.read())

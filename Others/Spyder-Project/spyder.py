@@ -1,11 +1,12 @@
+import string
 import json
-
-import pygame
 import time
 import os
+import re
 
 import pandas as pd
 import requests
+import pygame
 
 from fake_request import fakeRequests
 from excel_manager import readExcel
@@ -380,8 +381,83 @@ def excel2db2():
             print(f"新建: {i_cas_number} | {i_critical_quantity}")
 
 
-if __name__ == '__main__':
+def db2json():
     db = Database()
-    data = db.select(table="details")
+    chemicals_data = db.select(table="details")
+    # 处理名称
+    for chemical_index, chemical in enumerate(chemicals_data):
+        # 提取出所有名称
+        chemical_name = chemical["name"]
+        # 首先处理 [] 中的备注
+        pattern = re.compile(r"\[(.*?)\]")
+        remarks = pattern.findall(chemical_name)
+        for remark in remarks:
+            new_remark = remark.replace(",", "，")
+            chemical_name = chemical_name.replace(remark, new_remark)
+        # 然后分割出每个名称
+        chemical_name = chemical_name.split(",")
+        chemical_name = [n.replace("；", ";").replace("＇", "'") for n in chemical_name]
+        while True:
+            b = False
+            for n_index, n in enumerate(chemical_name):
+                if n and (n[-1] in list(string.digits + string.ascii_letters + "αβγ'")):
+                    if n_index < len(chemical_name) - 1:
+                        if (chemical_name[n_index + 1]) and (
+                                chemical_name[n_index + 1][0] in list(string.digits + string.ascii_letters + "αβγ-'")):
+                            new_n = f"{n},{chemical_name[n_index + 1]}"
+                            del chemical_name[n_index]
+                            chemical_name[n_index] = new_n
+                            break
+                    else:
+                        if n_index == len(chemical_name) - 1:
+                            b = True
+                else:
+                    if n_index == len(chemical_name) - 1:
+                        b = True
+            if b:
+                break
+        # 去除无效名称
+        valid_chemical_name = []
+        for n in chemical_name:
+            if not n or n in list(string.digits + string.ascii_letters + "αβγ-"):
+                continue
+            else:
+                # 继续分隔
+                n = n.split(";")
+                for m in n:
+                    # 恢复备注
+                    for remark in remarks:
+                        new_remark = remark.replace(",", "，")
+                        m = m.replace(new_remark, remark).strip()
+                    valid_chemical_name.append(m)
+        # 去重
+        chemical_name = list(set(valid_chemical_name))
+        # 更新字典
+        chemical["name"] = chemical_name
+        chemical["enName"] = [enName.strip() for enName in chemical["enName"].replace(";", "；").split("；")]
+        chemical["weixianxingleibie"] = [i for i in chemical["weixianxingleibie"].split(",") if i]
+        chemical["xiangxingtu"] = [f"GHS{ghs.strip()}" for ghs in chemical["xiangxingtu"].split("GHS") if ghs]
+        chemical["weixianxingshuoming"] = [f"H{i.strip()}" for i in chemical["weixianxingshuoming"].split("H") if i]
+        lihuatexing = []
+        for chemical_property in chemical["lihuatexing"].split(";"):
+            if chemical_property:
+                chemical_property = chemical_property.split(":")
+                chemical_property_name = chemical_property[0]
+                chemical_property_property = chemical_property[1] if len(chemical_property) > 1 else "无资料"
+                if re.compile("无资料").findall(chemical_property_property) or not chemical_property_property:
+                    chemical_property_property = "无资料"
+                if re.compile("无意义").findall(chemical_property_property):
+                    chemical_property_property = "无意义"
+                chemical_property_dict = {
+                    "name": chemical_property_name,
+                    "property": chemical_property_property
+                }
+                lihuatexing.append(chemical_property_dict)
+        chemical["lihuatexing"] = lihuatexing
+        chemicals_data[chemical_index] = chemical
     with open("chemicals.json", "w", encoding="utf-8") as fp:
-        json.dump(data, fp)
+        json.dump(chemicals_data, fp)
+
+
+if __name__ == '__main__':
+    db2json()
