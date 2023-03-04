@@ -43,7 +43,7 @@ def showUser():
 
 
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="首页", page_icon="🏠", menu_items=menu_items)
+st.set_page_config(page_title="首页", page_icon="🏠", layout="wide", menu_items=menu_items)
 st.markdown("### 🏠 首页")
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #

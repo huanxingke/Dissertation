@@ -7,7 +7,7 @@ from utils.config import menu_items
 from utils.initUserConfig import initUserConfig
 
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="关于", page_icon="❔", menu_items=menu_items)
+st.set_page_config(page_title="关于", page_icon="❔", layout="wide", menu_items=menu_items)
 st.markdown("### ❔ 关于")
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #

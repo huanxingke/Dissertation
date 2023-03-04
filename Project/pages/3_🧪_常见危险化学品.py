@@ -17,7 +17,7 @@ def load_chemicals():
 
 
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="常见危险化学品", page_icon="🧪", menu_items=menu_items)
+st.set_page_config(page_title="常见危险化学品", page_icon="🧪", layout="wide", menu_items=menu_items)
 st.markdown("### 🧪 常见危险化学品")
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #
