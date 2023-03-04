@@ -24,7 +24,6 @@ init_result = initUserConfig()
 # 等待初始化完毕
 if init_result:
     # ---------- 以下为页面自定义部分 ---------- #
-
     with st.spinner("正在载入化学品数据..."):
         chemicals = load_chemicals()
     if chemicals is not None:
