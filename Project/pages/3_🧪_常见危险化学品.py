@@ -5,13 +5,13 @@ import os
 
 import streamlit as st
 
-from utils.config import menu_items
+from utils.config import menu_items, work_path
 from utils.initUserConfig import initUserConfig
 
 
 @st.cache
 def load_chemicals():
-    with open(os.path.join(st.session_state.work_path, "Data", "jsonfiles", "chemicals.json"), "r") as fp:
+    with open(os.path.join(work_path, "Data", "JsonFiles", "chemicals.json"), "r") as fp:
         chemicals_data = json.load(fp)
     return chemicals_data
 

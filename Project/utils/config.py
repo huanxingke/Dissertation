@@ -1,7 +1,15 @@
 import os
 
 
-# ****** 1.右上角菜单栏 About 文字内容 ****** #
+# ****** 1.判断应用环境并选择路径 ****** #
+# 环境 -> 本地
+if os.environ.get("USERDOMAIN") == "HUANXINGKE":
+    work_path = os.path.abspath(os.path.dirname(os.getcwd()))
+# 环境 -> 云端
+else:
+    work_path = "."
+
+# ****** 2.右上角菜单栏 About 文字内容 ****** #
 menu_items = {
     "Get Help": "https://github.com/huanxingke/Dissertation",
     "Report a bug": None,
