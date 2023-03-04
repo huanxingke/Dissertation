@@ -2,6 +2,7 @@
 import warnings
 import logging
 import json
+import os
 
 warnings.filterwarnings("ignore")
 
@@ -13,11 +14,9 @@ import jieba
 jieba.setLogLevel(logging.INFO)
 
 
-class Query(object):
-    def __init__(self):
-        # 加载化学品数据
-        with open(os.path.join(st.session_state.work_path, "Data", "jsonfiles", "chemicals.json"), "r") as fp:
-            self.chemicals = json.load(fp)
+class QueryChemicals(object):
+    def __init__(self, chemicals):
+        self.chemicals = chemicals
         # 加载索引字典
         self.dictionary = corpora.Dictionary.load(os.path.join(st.session_state.work_path, "Data", "Models", "chemicals", "chemicals.dictionary"))
         # 加载模型
@@ -26,7 +25,7 @@ class Query(object):
         self.index = similarities.MatrixSimilarity.load(os.path.join(st.session_state.work_path, "Data", "Models", "chemicals", "chemicals.index"))
 
     # 搜索
-    def run(self, keywords):
+    def query(self, keywords):
         # 处理
         keywords = jieba.lcut(keywords)
         # 生成搜索词袋
@@ -42,7 +41,7 @@ class Query(object):
         for i in sim_sorted:
             chemical_index, chemical_sim = i
             query_result = self.chemicals[chemical_index]
-            query_result["similarity"] = chemical_sim
+            query_result["similarity"] = float(chemical_sim)
             query_results.append(query_result)
         # 返回搜索结果
         return query_results

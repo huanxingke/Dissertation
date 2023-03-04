@@ -5,11 +5,13 @@ import os
 
 import streamlit as st
 
-from utils.config import menu_items
+from utils.queryChemicals import QueryChemicals
 from utils.initUserConfig import initUserConfig
+from utils.chemicalsCard import chemicalsCard
+from utils.config import menu_items
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_chemicals():
     with open(os.path.join(st.session_state.work_path, "Data", "JsonFiles", "chemicals.json"), "r") as fp:
         chemicals_data = json.load(fp)
@@ -27,5 +29,13 @@ if init_result:
 
     with st.spinner("正在载入化学品数据..."):
         chemicals = load_chemicals()
-    if chemicals is not None:
-        st.write(chemicals[0]["name"])
+        qc = QueryChemicals(chemicals=chemicals)
+    if chemicals:
+        keywords = st.text_input("关键词", key="keywords_input")
+        if st.button("搜索", key="query_start"):
+            query_chemicals = qc.query(keywords=keywords)
+            st.write(query_chemicals)
+            if len(query_chemicals) > 0:
+                chemicalsCard(query_chemicals)
+            else:
+                st.warning("无搜索结果")
