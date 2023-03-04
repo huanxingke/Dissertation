@@ -52,6 +52,9 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                 $(action_a).click(function(){%s});
                 MainMenu.before(action_a);
             }
+            
+            //底部
+            $("footer").html("<p><i></i>South China University of Technology</p>")
     
             //隐藏本组件
             parent.css("display", "none");

@@ -12,12 +12,6 @@ from utils.actionButton import addActionButton
 from utils.queryChemicals import Query
 from utils.initUserConfig import initUserConfig
 
-# ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="常见危险化学品", page_icon="🧪")
-st.markdown("### 🧪 常见危险化学品")
-initUserConfig()
-# ---------- End:每页基础配置 ---------- #
-
 
 @st.cache
 def load_chemicals():
@@ -26,6 +20,16 @@ def load_chemicals():
     return chemicals_data
 
 
-chemicals = None
-with st.spinner("正在载入化学品数据..."):
-    chemicals = load_chemicals()
+# ---------- Start:每页基础配置 ---------- #
+st.set_page_config(page_title="常见危险化学品", page_icon="🧪")
+st.markdown("### 🧪 常见危险化学品")
+init_result = initUserConfig()
+# ---------- End:每页基础配置 ---------- #
+# 等待初始化完毕
+if init_result:
+    # ---------- 以下为页面自定义部分 ---------- #
+
+    with st.spinner("正在载入化学品数据..."):
+        chemicals = load_chemicals()
+    if chemicals is not None:
+        st.write(chemicals[0]["name"])

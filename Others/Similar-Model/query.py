@@ -44,3 +44,9 @@ class Query(object):
             query_results.append(query_result)
         # 返回搜索结果
         return query_results
+
+
+if __name__ == '__main__':
+    res = Query().run("甲烷")
+    for o in res:
+        print(o)

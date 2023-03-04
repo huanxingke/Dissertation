@@ -7,11 +7,15 @@ import streamlit as st
 from components.CookieManager import CookieManager, JSCookieManager
 from components.Webdav import JianGuoYunClient
 from utils.actionButton import addActionButton
+from utils.footer import footer
 
 
 # 每个页面打开时都需要初始化
 def initUserConfig():
     def init():
+        # ****** 0.网页底部文字更改 ****** #
+        footer()
+
         # ****** 1.判断应用环境并选择路径 ****** #
         # 环境 -> 本地
         if os.environ.get("USERDOMAIN") == "HUANXINGKE":
@@ -89,7 +93,7 @@ def initUserConfig():
         # ****** 6.网页右上角显示 ****** #
         # 6.1名字
         if userinfo is not None:
-            show_name = userinfo["student_name"] if len(userinfo["student_name"]) > 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
+            show_name = userinfo["student_name"] if len(userinfo["student_name"]) <= 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
             addActionButton(action_id="userinfo-action", action_text=f"欢迎，{show_name}", action_href="./个人信息")
         else:
             addActionButton(action_id="userinfo-action", action_text="欢迎，游客", action_href="./个人信息")

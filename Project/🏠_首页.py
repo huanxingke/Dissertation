@@ -16,7 +16,7 @@ from utils.initUserConfig import initUserConfig
 
 
 # 断开云盘链接
-def disconnect():
+def disconnect(refresh=False):
     # 从应用会话中移除
     if st.session_state.get("jgy"):
         del st.session_state.jgy
@@ -25,8 +25,9 @@ def disconnect():
     # 从本地 cookie 中移除
     JSCookieManager(key="user", delete=True)
     addActionButton(action_id="jgy-action", action_text="【云×】", action_color="orange", action_href="./首页")
-    # 刷新页面
-    refreshPage()
+    if refresh:
+        # 刷新页面
+        refreshPage()
 
 
 # 展示云盘配置情况
@@ -37,7 +38,7 @@ def showUser():
     addActionButton(action_id="jgy-action", action_text="【云√】", action_color="green", action_href="./首页")
     if st.button("断开连接"):
         with st.spinner("正在断开连接..."):
-            disconnect()
+            disconnect(refresh=True)
 
 
 # ---------- Start:每页基础配置 ---------- #
