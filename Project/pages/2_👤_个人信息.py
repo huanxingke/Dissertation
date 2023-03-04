@@ -6,13 +6,14 @@ import streamlit as st
 
 from components.CookieManager import CookieManager, JSCookieManager
 
+from utils.config import menu_items
 from utils.refreshPage import refreshPage
 from utils.actionButton import addActionButton
 from utils.initUserConfig import initUserConfig
 
 
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="个人信息", page_icon="👤")
+st.set_page_config(page_title="个人信息", page_icon="👤", menu_items=menu_items)
 st.markdown("### 👤 个人信息")
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #

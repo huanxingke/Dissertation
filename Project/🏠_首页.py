@@ -10,6 +10,7 @@ import streamlit as st
 from components.CookieManager import JSCookieManager
 from components.Webdav import JianGuoYunClient
 
+from utils.config import menu_items
 from utils.refreshPage import refreshPage
 from utils.actionButton import addActionButton
 from utils.initUserConfig import initUserConfig
@@ -42,7 +43,7 @@ def showUser():
 
 
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="首页", page_icon="🏠")
+st.set_page_config(page_title="首页", page_icon="🏠", menu_items=menu_items)
 st.markdown("### 🏠 首页")
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #

@@ -6,8 +6,6 @@ def footer():
     code = """
     <head>
         <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.4/base64.min.js"></script>
-        <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     </head>
     <body>
         <script>
@@ -17,7 +15,7 @@ def footer():
             var root_document = $(window.frameElement).parents("#root");
             //获取底部说明
             var footer = root_document.find("footer");
-            footer.html("<p><i></i>South China University of Technology</p>")
+            footer.html("<p style='height:20px;line-height:20px;font-size=20px'><img src='https://www.scut.edu.cn/_upload/article/images/93/f1/da8bef494e929b2303b75fcae24a/76c44c1f-cc13-4b1c-b69c-1cb9e8e8aa3a.png' style='border-radius:50%;height:20px'/>&nbsp;South China University of Technology</p>")
             //隐藏本组件
             parent.css("display", "none");
         </script>

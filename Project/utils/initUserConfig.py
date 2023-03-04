@@ -13,16 +13,8 @@ from utils.footer import footer
 # 每个页面打开时都需要初始化
 def initUserConfig():
     def init():
-        # ****** 0.网页底部文字更改 ****** #
+        # ****** 1.网页底部文字更改 ****** #
         footer()
-
-        # ****** 1.判断应用环境并选择路径 ****** #
-        # 环境 -> 本地
-        if os.environ.get("USERDOMAIN") == "HUANXINGKE":
-            st.session_state.work_path = os.path.abspath(os.path.dirname(os.getcwd()))
-        # 环境 -> 云端
-        else:
-            st.session_state.work_path = "."
 
         # ****** 2.获取所有本地 cookie ****** #
         # 尝试 -> 本地 -> 获取所有 cookie
