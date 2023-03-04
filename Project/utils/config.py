@@ -8,6 +8,7 @@ if os.environ.get("USERDOMAIN") == "HUANXINGKE":
 # 环境 -> 云端
 else:
     work_path = "."
+print(os.path.abspath("."))
 
 # ****** 2.右上角菜单栏 About 文字内容 ****** #
 menu_items = {
