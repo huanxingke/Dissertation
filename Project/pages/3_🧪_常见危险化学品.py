@@ -33,9 +33,19 @@ if init_result:
     if chemicals:
         keywords = st.text_input("关键词", key="keywords_input")
         if st.button("搜索", key="query_start"):
-            query_chemicals = qc.query(keywords=keywords)
-            st.write(query_chemicals)
-            if len(query_chemicals) > 0:
-                chemicalsCard(query_chemicals)
-            else:
-                st.warning("无搜索结果")
+            with st.spinner("正在搜索..."):
+                query_chemicals = qc.query(keywords=keywords)
+            if query_chemicals:
+                if len(query_chemicals) > 0:
+                    chemicals_with_pic = []
+                    path = os.path.join(st.session_state.work_path, "Data", "Images", "struct_pic", "{}.png")
+                    for query_chemical in query_chemicals:
+                        struct_pic = ""
+                        cas_number = query_chemical["cas_number"]
+                        if os.path.exists(path.format(cas_number)):
+                            with open(path.format(cas_number), "rb") as fp:
+                                struct_pic = "data:image/png;base64," + base64.b64encode(fp.read()).decode()
+                        query_chemical["struct_pic"] = struct_pic
+                    chemicalsCard(query_chemicals)
+                else:
+                    st.warning("无搜索结果")

@@ -14,13 +14,23 @@ def chemicalsCard(chemicals):
             <link rel="stylesheet" href="https://weui.shanliwawa.top/weui/css/weuix.css" type="text/css"/>
             <script type="text/javascript" src="https://weui.shanliwawa.top/weui/js/zepto.min.js"></script>
             <script type="text/javascript" src="https://weui.shanliwawa.top/weui/js/zepto.weui.js"></script>
+            <script type="text/javascript" src="https://unpkg.com/art-template@4.13.2/lib/template-web.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.4/base64.min.js"></script>
         </head>
         <body>
             <div id="chemicals"></div>
+            <script type="text/html" id="chemicals-template">
+                {{each chemicals}}
+                    <p>{{$value.cas_number}}</p>
+                    <img src="{{$value.struct_pic}}"/>
+                {{/each}}
+            </script>
             <script type="text/javascript">
                 var chemicals = JSON.parse(Base64.decode(`%s`));
-                $("#chemicals").text(chemicals[0]["cas_number"]);
+                var html = template("chemicals-template", {
+                    "chemicals": chemicals
+                });
+                $("#chemicals").html(html);
             </script>
         </body>
     </html>

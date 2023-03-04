@@ -4,6 +4,8 @@ import time
 import os
 import re
 
+from lxml.html import tostring
+from lxml import etree
 import pandas as pd
 import requests
 import pygame
@@ -65,34 +67,6 @@ def init404Pic(png_text, png_src):
     font = pygame.font.Font("simsun.ttc", 18)
     rtext = font.render(png_text, True, (0, 0, 0))
     pygame.image.save(rtext, png_src)
-
-
-def getStructPic(cas_number):
-    headers = {
-        "Host": "www.ichemistry.cn",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
-        "Referer": "http://www.ichemistry.cn/weixianpin/"
-    }
-    pic_url = f"http://ichemistry.cn/png_structures/{cas_number}.png"
-    response = fakeRequests(url=pic_url, headers=headers)
-    if response.status_code != 200:
-        init404Pic(f"CAS-{cas_number}结构式图片未找到！", f"struct_pic/{cas_number}.png")
-        print(f"CAS-{cas_number}结构式未找到！")
-    else:
-        with open(f"struct_pic/{cas_number}.png", "wb") as fp:
-            fp.write(response.content)
-        print(f"CAS-{cas_number}结构式图片已下载！")
-
-
-def getAllStructPic():
-    if not os.path.exists("struct_pic"):
-        os.mkdir("struct_pic")
-    db = Database()
-    data = db.select(table="details")
-    for chemical in data:
-        cas_number = chemical["cas_number"]
-        if not os.path.exists(f"struct_pic/{cas_number}.png"):
-            getStructPic(cas_number=cas_number)
 
 
 def searchByCAS(cas_number):
@@ -434,6 +408,7 @@ def db2json():
         chemical_name = list(set(valid_chemical_name))
         # 更新字典
         chemical["name"] = chemical_name
+        chemical["cas_number"] = chemical["cas_number"].replace(";", "；").split("；")
         chemical["enName"] = [enName.strip() for enName in chemical["enName"].replace(";", "；").split("；")]
         chemical["weixianxingleibie"] = [i for i in chemical["weixianxingleibie"].split(",") if i]
         chemical["xiangxingtu"] = [f"GHS{ghs.strip()}" for ghs in chemical["xiangxingtu"].split("GHS") if ghs]
@@ -457,6 +432,97 @@ def db2json():
         chemicals_data[chemical_index] = chemical
     with open("chemicals.json", "w", encoding="utf-8") as fp:
         json.dump(chemicals_data, fp)
+
+
+def getStructPic(cas_number):
+    if os.path.exists(f"struct_pic/{cas_number}.png"):
+        print(f"CAS-{cas_number}结构式图片已存在！")
+        return
+    headers = {
+        "Host": "www.ichemistry.cn",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
+        "Referer": "http://www.ichemistry.cn/weixianpin/"
+    }
+    pic_url = f"http://ichemistry.cn/png_structures/{cas_number}.png"
+    response = fakeRequests(url=pic_url, headers=headers)
+    if response.status_code != 200:
+        init404Pic(f"CAS-{cas_number}结构式图片未找到！", f"struct_pic/{cas_number}.png")
+        print(f"CAS-{cas_number}结构式未找到！")
+    else:
+        with open(f"struct_pic/{cas_number}.png", "wb") as fp:
+            fp.write(response.content)
+        print(f"CAS-{cas_number}结构式图片已下载！")
+
+
+def getAllStructPic():
+    if not os.path.exists("struct_pic"):
+        os.mkdir("struct_pic")
+    db = Database()
+    data = db.select(table="details")
+    fails = []
+    for chemical in data:
+        cas_number = chemical["cas_number"]
+        if not os.path.exists(f"struct_pic/{cas_number}.png"):
+            getStructPic(cas_number=cas_number)
+
+
+def getStructPic2(cas_numbers, chemical_index, counts):
+    cas_numbers = cas_numbers.replace(";", "；").split("；")
+    for cas_number in cas_numbers:
+        chemicals_struct = {}
+        if os.path.exists("chemicals-struct.json"):
+            with open("chemicals-struct.json", "r", encoding="utf-8") as fp:
+                chemicals_struct = json.load(fp)
+        if os.path.exists(f"struct_pic/{cas_number}.png"):
+            print(f"CAS-{cas_number}结构式图片已存在！")
+            continue
+        url = f"http://cheman.chemnet.com/dict/supplier.cgi?terms={cas_number}&exact=dict&f=plist&hidden=markf"
+        response = fakeRequests(url=url)
+        response.encoding = "gb2312"
+        html = response.text
+        tree = etree.HTML(html)
+        # 分子式
+        molecular_formula = ""
+        molecular_formula_td = tree.xpath("//td[contains(text(), '分子式')]/following-sibling::td")
+        if molecular_formula_td:
+            molecular_formula_td = molecular_formula_td[0]
+            molecular_formula_html = tostring(molecular_formula_td, encoding="utf-8").decode("utf-8").replace("\n", "")
+            molecular_formula = re.compile(r"<td.*?>(.*?)</td>").findall(molecular_formula_html)[0]
+        # 结构式图片
+        struct = ""
+        struct_img = tree.xpath("//td[contains(text(), '分子结构')]/following-sibling::td//img/@src")
+        if struct_img:
+            struct = struct_img[0]
+            img = fakeRequests(url=struct).content
+            with open(f"struct/{cas_number}.png", "wb") as fp:
+                fp.write(img)
+        chemicals_struct[cas_number] = {
+            "struct": struct,
+            "molecular_formula": molecular_formula
+        }
+        with open("chemicals-struct.json", "w", encoding="utf-8") as fp:
+            json.dump(chemicals_struct, fp)
+        print(f"[{chemical_index+1}/{counts}]{cas_number}: {molecular_formula} - {struct}")
+
+
+def getAllStructPic2():
+    if not os.path.exists("struct"):
+        os.mkdir("struct")
+    db = Database()
+    data = db.select(table="details")
+    counts = len(data)
+    chemicals_struct = {}
+    if os.path.exists("chemicals-struct.json"):
+        with open("chemicals-struct.json", "r", encoding="utf-8") as fp:
+            chemicals_struct = json.load(fp)
+    for chemical_index, chemical in enumerate(data):
+        print(chemical["name"])
+        cas_number = chemical["cas_number"]
+        if cas_number not in chemicals_struct:
+            getStructPic2(cas_numbers=cas_number, chemical_index=chemical_index, counts=counts)
+        else:
+            print(f"[{chemical_index+1}/{counts}]已采集: {cas_number}")
+            continue
 
 
 if __name__ == '__main__':
