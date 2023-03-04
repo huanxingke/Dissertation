@@ -47,6 +47,6 @@ class Query(object):
 
 
 if __name__ == '__main__':
-    res = Query().run("甲烷")
+    res = Query().run("氨气")
     for o in res:
         print(o)

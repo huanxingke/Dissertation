@@ -20,7 +20,17 @@ with open("chemicals.json", "r") as fp:
     chemicals_data = json.load(fp)
 
 # 处理每种化学品名称
-chemical_names = [chemical["name"] for chemical in chemicals_data]
+chemical_names = []
+for chemical in chemicals_data:
+    chemical_dict = []
+    for cas_number in chemical["cas_number"]:
+        if cas_number not in chemical_dict:
+            chemical_dict.append(cas_number)
+    for name in chemical["name"]:
+        for w in jieba.lcut(name):
+            if w not in chemical_dict:
+                chemical_dict.append(w)
+    chemical_names.append(chemical_dict)
 
 # 生成索引字典
 dictionary = corpora.Dictionary(chemical_names)

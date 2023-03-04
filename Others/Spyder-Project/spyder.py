@@ -358,6 +358,7 @@ def excel2db2():
 def db2json():
     db = Database()
     chemicals_data = db.select(table="details")
+    chemicals_names = []
     # 处理名称
     for chemical_index, chemical in enumerate(chemicals_data):
         # 提取出所有名称
@@ -473,8 +474,11 @@ def getStructPic2(cas_numbers, chemical_index, counts):
         if os.path.exists("chemicals-struct.json"):
             with open("chemicals-struct.json", "r", encoding="utf-8") as fp:
                 chemicals_struct = json.load(fp)
+        if cas_number in chemicals_struct:
+            print(f"【{chemical_index+1}/{counts}】【{cas_number}】已采集")
+            continue
         if os.path.exists(f"struct_pic/{cas_number}.png"):
-            print(f"CAS-{cas_number}结构式图片已存在！")
+            print(f"【{chemical_index+1}/{counts}】【{cas_number}】已采集")
             continue
         url = f"http://cheman.chemnet.com/dict/supplier.cgi?terms={cas_number}&exact=dict&f=plist&hidden=markf"
         response = fakeRequests(url=url)
@@ -502,7 +506,7 @@ def getStructPic2(cas_numbers, chemical_index, counts):
         }
         with open("chemicals-struct.json", "w", encoding="utf-8") as fp:
             json.dump(chemicals_struct, fp)
-        print(f"[{chemical_index+1}/{counts}]{cas_number}: {molecular_formula} - {struct}")
+        print(f"【{chemical_index+1}/{counts}】【{cas_number}】{molecular_formula} - {struct}")
 
 
 def getAllStructPic2():
@@ -511,19 +515,14 @@ def getAllStructPic2():
     db = Database()
     data = db.select(table="details")
     counts = len(data)
-    chemicals_struct = {}
-    if os.path.exists("chemicals-struct.json"):
-        with open("chemicals-struct.json", "r", encoding="utf-8") as fp:
-            chemicals_struct = json.load(fp)
     for chemical_index, chemical in enumerate(data):
+        if chemical_index != 1813:
+            continue
         print(chemical["name"])
         cas_number = chemical["cas_number"]
-        if cas_number not in chemicals_struct:
-            getStructPic2(cas_numbers=cas_number, chemical_index=chemical_index, counts=counts)
-        else:
-            print(f"[{chemical_index+1}/{counts}]已采集: {cas_number}")
-            continue
+        getStructPic2(cas_numbers=cas_number, chemical_index=chemical_index, counts=counts)
 
 
 if __name__ == '__main__':
-    db2json()
+    # db2json()
+    getAllStructPic2()

@@ -31,21 +31,29 @@ if init_result:
         chemicals = load_chemicals()
         qc = QueryChemicals(chemicals=chemicals)
     if chemicals:
-        keywords = st.text_input("关键词", key="keywords_input")
+        keywords = st.text_input("请输入要检索的化合物：", key="keywords_input")
         if st.button("搜索", key="query_start"):
             with st.spinner("正在搜索..."):
                 query_chemicals = qc.query(keywords=keywords)
             if query_chemicals:
-                if len(query_chemicals) > 0:
-                    chemicals_with_pic = []
+                # 增加了结构式图片的搜索结果
+                query_chemicals_with_pic = []
+                for query_chemical in query_chemicals:
+                    # 结构式图片路径
                     path = os.path.join(st.session_state.work_path, "Data", "Images", "struct_pic", "{}.png")
-                    for query_chemical in query_chemicals:
+                    # 结构式图片, 与 CAS 号索引对应
+                    struct_pics = []
+                    # CAS号, 部分化学品对应多个 CAS 号
+                    cas_numbers = query_chemical["cas_number"]
+                    for cas_number in cas_numbers:
                         struct_pic = ""
-                        cas_number = query_chemical["cas_number"]
                         if os.path.exists(path.format(cas_number)):
                             with open(path.format(cas_number), "rb") as fp:
+                                # 转化为 base64 以传递给 html
                                 struct_pic = "data:image/png;base64," + base64.b64encode(fp.read()).decode()
-                        query_chemical["struct_pic"] = struct_pic
-                    chemicalsCard(query_chemicals)
-                else:
-                    st.warning("无搜索结果")
+                        struct_pics.append(struct_pic)
+                    query_chemical["struct_pic"] = struct_pics
+                    query_chemicals_with_pic.append(query_chemical)
+                chemicalsCard(query_chemicals_with_pic)
+            else:
+                st.warning("无搜索结果")
