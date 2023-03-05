@@ -525,4 +525,5 @@ def getAllStructPic2():
 
 if __name__ == '__main__':
     # db2json()
-    getAllStructPic2()
+    # getAllStructPic2()
+    pass

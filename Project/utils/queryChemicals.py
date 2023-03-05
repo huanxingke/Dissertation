@@ -42,6 +42,7 @@ class QueryChemicals(object):
             chemical_index, chemical_sim = i
             query_result = self.chemicals[chemical_index]
             query_result["similarity"] = float(chemical_sim)
+            query_result["index"] = int(chemical_index)
             query_results.append(query_result)
         # 返回搜索结果
-        return query_results
+        return query_results[:5]

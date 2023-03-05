@@ -15,12 +15,16 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                 try {
                     var user = $.cookie("user");
                     var userinfo = $.cookie("userinfo");
-                    if (user == undefined && userinfo == undefined) {
+                    var chemical_favorites = $.cookie("chemical_favorites");
+                    var query_chemicals = $.cookie("query_chemicals");
+                    if (user == undefined && userinfo == undefined && chemical_favorites == undefined && query_chemicals == undefined) {
                         return alert("无需注销！");
                     }
                     if (confirm("确定注销吗？这将清除所有本地cookie并断开坚果云连接！") == true){ 
                         $.removeCookie("user", { path: "/"});
                         $.removeCookie("userinfo", { path: "/"});
+                        $.removeCookie("chemical_favorites", { path: "/"});
+                        $.removeCookie("query_chemicals", { path: "/"});
                         alert("已注销！");
                         window.top.location.reload();
                     } else{ 
@@ -50,6 +54,7 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                 $(action_a).attr("href", "%s");
                 $(action_a).text("%s")
                 $(action_a).click(function(){%s});
+                console.log($(action_a))
                 MainMenu.before(action_a);
             }
             

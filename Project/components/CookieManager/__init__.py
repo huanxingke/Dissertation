@@ -104,14 +104,15 @@ def hideComponent(component_name="cookie_manager"):
     """ % component_name, height=0)
 
 
-def JSCookieManager(key, value="", delete=False, expires=365, senseless=True):
+def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, nobase64=False):
     isStr = lambda x: False if (not isinstance(x, str)) or (not "".join([re.sub(r"\s+", "", i) for i in x])) else True
     # 键只能为非空字符串
     if isStr(key):
         # 键前后不能留有空白字符
         key = key.strip()
         # 以 base64 储存
-        value = base64.b64encode(str(value).encode()).decode()
+        if not nobase64:
+            value = base64.b64encode(str(value).encode()).decode()
         if not delete:
             # 储存 cookie
             code = """

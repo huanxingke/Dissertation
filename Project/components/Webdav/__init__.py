@@ -57,9 +57,10 @@ class JianGuoYunClient(object):
         return {"code": 200, "msg": "Success.", "content": content}
 
     @Validation
-    def get(self, param):
+    def get(self, param, nobase64=False):
         """获取 cookie
 
+        :type nobase64: 是否 base64加密
         :param str param: cookie 键
         :return:
         """
@@ -67,7 +68,10 @@ class JianGuoYunClient(object):
         if not isStr(param):
             return {"code": -1, "msg": "Key Not Allowed!"}
         param = param.strip()
-        filename = f"{param}.b64"
+        if nobase64:
+            filename = f"{param}.txt"
+        else:
+            filename = f"{param}.b64"
         get_result = self.getContent(filename)
         if get_result.get("code") == 200:
             return {"code": 200, "msg": "Success.", "value": get_result.get("content").decode()}
@@ -75,9 +79,10 @@ class JianGuoYunClient(object):
             return get_result
 
     @Validation
-    def set(self, param, value=""):
+    def set(self, param, value="", nobase64=False):
         """上传 cookie
 
+        :type nobase64: 是否 base64加密
         :param str param: cookie 键
         :param str value: cookie 值
         :return:
@@ -86,8 +91,12 @@ class JianGuoYunClient(object):
         if not isStr(param):
             return {"code": -1, "msg": "Key Not Allowed!"}
         param = param.strip()
-        filename = f"{param}.b64"
-        content = base64.b64encode(str(value).encode())
+        if nobase64:
+            filename = f"{param}.txt"
+            content = str(value).encode()
+        else:
+            filename = f"{param}.b64"
+            content = base64.b64encode(str(value).encode())
         upload_res = self.uploadContent(content=content, filename=filename)
         return upload_res
 
