@@ -25,7 +25,7 @@ def disconnect(refresh=False):
         del st.session_state.user
     # 从本地 cookie 中移除
     JSCookieManager(key="user", delete=True)
-    addActionButton(action_id="jgy-action", action_text="【云×】", action_color="orange", action_href="./首页")
+    addActionButton(action_id="jgy-action", action_text="[云×]", action_color="orange", action_href="./首页")
     if refresh:
         # 刷新页面
         refreshPage()
@@ -36,7 +36,7 @@ def showUser():
     st.success("已成功连接至坚果云盘！")
     st.text_input(label="[坚果云]账户：", key="show_username", disabled=True, value=username)
     st.text_input(label="[坚果云]应用密码：", key="show_password", disabled=True, value=password, type="password")
-    addActionButton(action_id="jgy-action", action_text="【云√】", action_color="green", action_href="./首页")
+    addActionButton(action_id="jgy-action", action_text="[云√]", action_color="green", action_href="./首页")
     if st.button("断开连接"):
         with st.spinner("正在断开连接..."):
             disconnect(refresh=True)

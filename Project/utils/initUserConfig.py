@@ -157,21 +157,20 @@ def initUserConfig():
                     if jgy is not None:
                         jgy.set(param="query_chemicals_keywords", value=query_chemicals_keywords, nobase64=True)
 
-
         # ****** 6.网页右上角显示 ****** #
         # 6.1名字
         if userinfo is not None:
             show_name = userinfo["student_name"] if len(userinfo["student_name"]) <= 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
-            addActionButton(action_id="userinfo-action", action_text=f"欢迎，{show_name}", action_href="./个人信息")
+            addActionButton(action_id="userinfo-action", action_text=show_name, action_href="./个人信息")
         else:
-            addActionButton(action_id="userinfo-action", action_text="欢迎，游客", action_href="./个人信息")
+            addActionButton(action_id="userinfo-action", action_text="游客", action_href="./个人信息")
         # 6.2坚果云连接状态
         if jgy is not None:
-            addActionButton(action_id="jgy-action", action_text="【云√】", action_color="green", action_href="./首页")
+            addActionButton(action_id="jgy-action", action_text="[云√]", action_color="green", action_href="./首页")
         else:
-            addActionButton(action_id="jgy-action", action_text="【云×】", action_color="orange", action_href="./首页")
+            addActionButton(action_id="jgy-action", action_text="[云×]", action_color="orange", action_href="./首页")
         # 6.3注销按钮
-        addActionButton(action_id="exit-action", action_text="【注销】", action_color="red", action_func="clearAllCookie()")
+        addActionButton(action_id="exit-action", action_text="[注销]", action_color="red", action_func="clearAllCookie()")
 
         # ****** 7.返回初始化完成结果 ****** #
         return True

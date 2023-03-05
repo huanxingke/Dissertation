@@ -64,7 +64,7 @@ if init_result:
                 # 7.右上角显示 -> 名字
                 show_name = userinfo["student_name"] if len(
                     userinfo["student_name"]) <= 3 else f"{userinfo['student_name'][0]}*{userinfo['student_name'][-1]}"
-                addActionButton(action_id="userinfo-action", action_text=f"欢迎，{show_name}", action_href="./个人信息")
+                addActionButton(action_id="userinfo-action", action_text=show_name, action_href="./个人信息")
     # 3.如果 -> 存在用户个人信息 -> 显示个人信息数据
     else:
         st.markdown(f"**姓名**：{userinfo['student_name']}")
@@ -83,7 +83,7 @@ if init_result:
         # 清除 -> 本地 -> 用户个人信息
         JSCookieManager(key="userinfo", delete=True)
         # 右上角显示
-        addActionButton(action_id="userinfo-action", action_text="欢迎，游客", action_href="./个人信息")
+        addActionButton(action_id="userinfo-action", action_text="游客", action_href="./个人信息")
         # 尝试 -> 清除 -> 云端 -> 用户个人信息
         if jgy is not None:
             with st.spinner("正在删除云端个人信息..."):

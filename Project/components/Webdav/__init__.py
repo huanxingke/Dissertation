@@ -1,7 +1,10 @@
 import base64
 import re
 
-from .webdav4Mod.client import Client
+try:
+    from .webdav4Mod.client import Client
+except:
+    from webdav4Mod.client import Client
 
 
 def Validation(func):

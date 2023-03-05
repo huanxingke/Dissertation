@@ -54,7 +54,6 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                 $(action_a).attr("href", "%s");
                 $(action_a).text("%s")
                 $(action_a).click(function(){%s});
-                console.log($(action_a))
                 MainMenu.before(action_a);
             }
             
