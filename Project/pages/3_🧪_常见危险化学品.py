@@ -14,7 +14,7 @@ from utils.refreshPage import refreshPage
 from utils.config import menu_items
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data()
 def load_chemicals():
     with open(os.path.join(st.session_state.work_path, "Data", "JsonFiles", "chemicals.json"), "r") as fp:
         chemicals_data = json.load(fp)
