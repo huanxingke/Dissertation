@@ -1,3 +1,4 @@
+import base64
 import os
 
 import streamlit as st
@@ -17,4 +18,9 @@ if init_result:
 
     with open(os.path.join(st.session_state.work_path, "Data", "Knowledge", "EnterpriseQValue.md"), "r", encoding="utf-8") as fp:
         knowledge = fp.read()
+    with open(os.path.join(st.session_state.work_path, "Data", "Knowledge", "pictures", "EnvironmentalParameterDetection", "噪声危害一览表.png"), "rb") as fp:
+        img = base64.b64encode(fp.read()).decode()
+    knowledge += f"""
+    [Image1]:data:image/png;base64,{img}\n\n
+    """
     st.markdown(knowledge)
