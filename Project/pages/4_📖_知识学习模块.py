@@ -19,7 +19,7 @@ if init_result:
     # ---------- 以下为页面自定义部分 ---------- #
 
     pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
-    knowledges = os.listdir(os.path.join(st.session_state.work_path, "Data", "Knowledges"))
+    knowledges = sorted(os.listdir(os.path.join(st.session_state.work_path, "Data", "Knowledges")))
     knowledges_option = st.selectbox(
         "选择章节",
         knowledges,
