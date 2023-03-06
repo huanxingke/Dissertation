@@ -16,9 +16,11 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
                     var user = $.cookie("user");
                     var userinfo = $.cookie("userinfo");
                     var chemical_favorites = $.cookie("chemical_favorites");
-                    var query_chemicals = $.cookie("query_chemicals");
-                    if (user == undefined && userinfo == undefined && chemical_favorites == undefined && query_chemicals == undefined) {
-                        return alert("无需注销！");
+                    var chemicals_query_items = $.cookie("chemicals_query_items");
+                    if (user == undefined && userinfo == undefined) {
+                        if (chemical_favorites == undefined && chemicals_query_items == undefined) {
+                            return alert("无需注销！");
+                        }
                     }
                     if (confirm("确定注销吗？这将清除所有本地cookie并断开坚果云连接！") == true){ 
                         $.removeCookie("user", { path: "/"});

@@ -10,7 +10,6 @@ from components.CookieManager import JSCookieManager
 from utils.queryChemicals import QueryChemicals
 from utils.initUserConfig import initUserConfig
 from utils.chemicalsCard import chemicalsCard
-from utils.refreshPage import refreshPage
 from utils.config import menu_items
 
 

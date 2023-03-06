@@ -230,7 +230,7 @@ def chemicalsCard(chemical):
                             <span class="info-label" style="font-weight:bold" onclick="showText('{{name[0]}}', this)">
                                 环境危害
                             </span>：
-                            <span>{{huanjingweihai}}{{if critical_quantity}}临界量：{{critical_quantity}}t{{/if}}</span>
+                            <span>{{huanjingweihai}}{{if critical_quantity}}【临界量：{{critical_quantity}}t】{{/if}}</span>
                         </p>
                     </div>
                     <div class="decoration-div" style="grid-row-start:6;grid-row-end:7;">
@@ -357,7 +357,7 @@ def chemicalsCard(chemical):
                     $.prompts({
                         title: name[0],
                         text: "名称",
-                        input: "中文名：" + name.join("；") + "\\n\\n英文名：" + enName.join("；"),
+                        input: "（1）中文名：" + name.join("；") + "\\n（2）英文名：" + enName.join("；"),
                         empty: false,
                         onOK: function (v) {copy()},
                         onCancel: function () {}
@@ -384,10 +384,24 @@ def chemicalsCard(chemical):
                 
                 //点击化学品其他项目时弹窗
                 function showText(name, obj) {
+                    var subtitle = $(obj).text();
+                    console.log(subtitle)
+                    if (subtitle.match(/急救措施/i) == null) {
+                        var input_text = $(obj).next().text().replaceAll("\\n", "").split("。").join("。\\n");
+                    } else {
+                        var input_text = "";
+                        $.each($(obj).next().text().replaceAll("\\n", "").replaceAll(";", "；").split("；"), function(i, t) {
+                            if (t.split(":")[1] != "") {
+                                input_text += "（" + (i + 1) + "）" + t + "\\n";
+                            } else {
+                                input_text += "（" + (i + 1) + "）" + t + "无资料。\\n";
+                            }
+                        })
+                    }
                     $.prompts({
                         title: name,
-                        text: $(obj).text(),
-                        input: $(obj).next().text(),
+                        text: subtitle,
+                        input: input_text,
                         empty: false,
                         onOK: function (v) {copy()},
                         onCancel: function () {}

@@ -105,6 +105,15 @@ for chemical_index, chemical in enumerate(chemicals_data):
     # 索引
     chemical["index"] = chemical_index
 
+    # 去除换行符
+    chemical["huanjingweihai"] = chemical["huanjingweihai"].replace("\n", "").replace(" ", "")
+    chemical["ranshaoyubaozhaweixianxing"] = chemical["ranshaoyubaozhaweixianxing"].replace("\n", "").replace(" ", "")
+    chemical["huoxingfanying"] = chemical["huoxingfanying"].replace("\n", "").replace(" ", "")
+    chemical["zhongdubiaoxian"] = chemical["zhongdubiaoxian"].replace("\n", "").replace(" ", "")
+    chemical["jijiucuoshi"] = chemical["jijiucuoshi"].replace("\n", "").replace(" ", "")
+    chemical["miehuofangfa"] = chemical["miehuofangfa"].replace("\n", "").replace(" ", "")
+    chemical["xielouyingjichuzhi"] = chemical["xielouyingjichuzhi"].replace("\n", "").replace(" ", "")
+
     new_chemicals.append(chemical)
 
 
