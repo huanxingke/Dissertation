@@ -34,44 +34,65 @@ if init_result:
         chemicals = load_chemicals()
         qc = QueryChemicals(chemicals=chemicals)
     if chemicals:
-        select_mode = st.radio(
+        # st.write(st.session_state)
+        st.radio(
             "选择检索方式",
             ("关键词检索", "全部化学品", "查看已收藏"),
-            horizontal=True
+            horizontal=True,
+            key="chemicals_query_mode"
         )
-        if select_mode == "全部化学品":
-            option = st.selectbox(
+        if st.session_state.get("chemicals_query_mode") == "全部化学品":
+            # 从 session_state 读取选项
+            option = st.session_state.get("chemicals_all_option")
+            option_index = 0
+            if option:
+                option_index = int(option.split("@")[0]) - 1
+            st.selectbox(
                 "全部化学品",
-                [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemicals)]
+                [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemicals)],
+                key="chemicals_all_option",
+                index=option_index
             )
-            option_index = int(option.split("@")[0]) - 1
             chemicalsCard(chemicals[option_index])
-        elif select_mode == "查看已收藏":
+        elif st.session_state.get("chemicals_query_mode") == "查看已收藏":
+            # 检索是否存在收藏
             if st.session_state.get("chemical_favorites"):
-                # 恢复为列表
+                # 恢复为收藏列表
                 chemical_favorites = st.session_state.get("chemical_favorites").split(",")
                 chemical_favorites_list = []
                 for chemical_index in chemical_favorites:
                     chemical_favorites_list.append(chemicals[int(chemical_index)])
-                option = st.selectbox(
+                # 从 session_state 读取选项
+                option = st.session_state.get("chemical_favorites_option")
+                option_index = 0
+                if option:
+                    option_index = int(option.split("@")[0]) - 1
+                st.selectbox(
                     "已收藏化学品",
-                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemical_favorites_list)]
+                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemical_favorites_list)],
+                    key="chemical_favorites_option",
+                    index=option_index
                 )
-                option_index = int(option.split("@")[0]) - 1
                 chemicalsCard(chemical_favorites_list[option_index])
             else:
                 st.warning("无收藏！")
         else:
-            keywords = st.text_input(
-                label="请输入要检索的化学品：",
-                key="keywords_input",
-                placeholder=st.session_state.get("query_chemicals_keywords") or ""
-            )
-            start_query = st.button("搜索", key="query_start")
+            if st.session_state.get("chemicals_query_items"):
+                keywords = st.text_input(
+                    label="请输入要检索的化学品：",
+                    placeholder=st.session_state.get("chemicals_query_items").get("keywords")
+                )
+            else:
+                keywords = st.text_input(label="请输入要检索的化学品：")
+            start_query = st.button("搜索")
             if start_query:
                 with st.spinner("正在搜索..."):
+                    if not keywords:
+                        keywords = st.session_state.get("chemicals_query_items").get("keywords")
+                    # 如果是 CAS 号则精确查询
                     if keywords.replace("-", "").isdigit():
                         query_chemicals = [i for i in chemicals if keywords in i["cas_number"]]
+                    # 否则模糊匹配
                     else:
                         query_chemicals = qc.query(keywords=keywords)
                     if query_chemicals:
@@ -79,38 +100,40 @@ if init_result:
                         with st.spinner("正在保存检索记录"):
                             # 拼接列表
                             query_chemicals_string = ",".join([str(i["index"]) for i in query_chemicals])
+                            # 保存于 -> 应用会话
+                            chemicals_query_items = {
+                                "keywords": keywords,
+                                "result": [i["index"] for i in query_chemicals]
+                            }
+                            st.session_state.chemicals_query_items = chemicals_query_items
                             # 保存于 -> 本地
-                            JSCookieManager(key="query_chemicals", value=query_chemicals_string, nobase64=True)
-                            JSCookieManager(key="query_chemicals_keywords", value=keywords, nobase64=True)
+                            JSCookieManager(key="chemicals_query_items", value=json.dumps(chemicals_query_items))
                             # 保存于 -> 云端
                             if st.session_state.get("jgy") is not None:
-                                st.session_state.jgy.set(param="query_chemicals", value=query_chemicals_string,
-                                                         nobase64=True)
-                                st.session_state.jgy.set(param="query_chemicals_keywords", value=keywords,
-                                                         nobase64=True)
-                            if len(query_chemicals) > 1:
-                                refreshPage()
-                            else:
-                                option = st.selectbox(
-                                    f"【{keywords}】的搜索结果如下（唯一结果）",
-                                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(query_chemicals)],
-                                    disabled=True
-                                )
-                                option_index = int(option.split("@")[0]) - 1
-                                chemicalsCard(query_chemicals[option_index])
+                                st.session_state.jgy.set(param="chemicals_query_items", value=json.dumps(chemicals_query_items))
+                            option = st.selectbox(
+                                f"【{keywords}】的搜索结果如下",
+                                [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(query_chemicals)],
+                                key="chemicals_query_option"
+                            )
+                            option_index = int(option.split("@")[0]) - 1
+                            chemicalsCard(query_chemicals[option_index])
                     else:
                         st.warning("无搜索结果！")
-            elif st.session_state.get("query_chemicals"):
-                # 恢复为列表
-                query_chemicals = st.session_state.get("query_chemicals").split(",")
-                query_chemicals_list = []
-                for chemical_index in query_chemicals:
-                    query_chemicals_list.append(chemicals[int(chemical_index)])
-                option_title = f"【{st.session_state.get('query_chemicals_keywords')}】的搜索结果如下"
+            elif st.session_state.get("chemicals_query_items"):
+                # 恢复为查询结果列表
+                query_chemicals_index = st.session_state.get("chemicals_query_items").get("result")
+                query_chemicals = []
+                for query_chemical_index in query_chemicals_index:
+                    query_chemicals.append(chemicals[query_chemical_index])
+                # 从 session_state 读取选项
+                option = st.session_state.get("chemicals_query_option")
+                option_index = 0
+                if option:
+                    option_index = int(option.split("@")[0]) - 1
                 option = st.selectbox(
-                    option_title if len(query_chemicals_list) > 1 else option_title + "（唯一结果）",
-                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(query_chemicals_list)],
-                    disabled=True if len(query_chemicals_list) <= 1 else False
+                    f"【{st.session_state.get('chemicals_query_items').get('keywords')}】的搜索结果如下",
+                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(query_chemicals)],
+                    key="chemicals_query_option"
                 )
-                option_index = int(option.split("@")[0]) - 1
-                chemicalsCard(query_chemicals_list[option_index])
+                chemicalsCard(query_chemicals[option_index])

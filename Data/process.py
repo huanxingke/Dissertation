@@ -56,7 +56,7 @@ GHS_meanings = {
 new_chemicals = []
 for chemical_index, chemical in enumerate(chemicals_data):
     # 结构式图片路径
-    struct_pic_path = "./Images/struct_pic/{}.png"
+    struct_pic_path = "./Images/struct_pic/{}.jpg"
     # 象形图图片路径
     GHSPic_path = "./Images/GHSPic/{}.gif"
     

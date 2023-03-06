@@ -42,8 +42,7 @@ def initUserConfig():
         # 尝试 -> 应用会话 -> 获取用户收藏的化学品
         chemical_favorites = st.session_state.get("chemical_favorites")
         # 尝试 -> 应用会话 -> 获取用户最近一次搜索化学品的记录
-        query_chemicals = st.session_state.get("query_chemicals")
-        query_chemicals_keywords = st.session_state.get("query_chemicals")
+        chemicals_query_items = st.session_state.get("chemicals_query_items")
 
         # ****** 4.先尝试自动连接坚果云 ****** #
         # 如果 -> 未连接坚果云
@@ -120,42 +119,30 @@ def initUserConfig():
                     JSCookieManager(key="chemical_favorites", value=chemical_favorites, nobase64=True)
 
         # 5.3.获取用户最近一次搜索化学品的记录[以云端优先]
-        # 5.3.1.[首先 -> 云端] 如果 -> 应用会话 -> 不存在用户最近一次搜索化学品的记录
-        if query_chemicals is None:
+        # 5.3.1.[首先 -> 云端] 如果 -> 应用会话 -> 不存在用户个人信息
+        if chemicals_query_items is None:
             # 如果 -> 已连接坚果云
             if jgy is not None:
                 # 尝试 -> 云端 -> 获取用户最近一次搜索化学品的记录
-                cloud_query_chemicals = jgy.get(param="query_chemicals", nobase64=True)
+                cloud_chemicals_query_items = jgy.get("chemicals_query_items")
                 # 如果 -> 获取成功
-                if cloud_query_chemicals and cloud_query_chemicals.get("code") == 200:
-                    query_chemicals = cloud_query_chemicals["value"]
-                    # 保存 -> 应用会话 -> 获取用户最近一次搜索化学品的记录
-                    st.session_state.query_chemicals = query_chemicals
-                    # 保存 -> 本地 -> 获取用户最近一次搜索化学品的记录
-                    JSCookieManager(key="query_chemicals", value=query_chemicals, nobase64=True)
-                # 搜索关键词同理
-                cloud_query_chemicals_keywords = jgy.get(param="query_chemicals_keywords", nobase64=True)
-                if cloud_query_chemicals_keywords and cloud_query_chemicals_keywords.get("code") == 200:
-                    query_chemicals_keywords = cloud_query_chemicals_keywords["value"]
-                    st.session_state.query_chemicals_keywords = query_chemicals_keywords
-                    JSCookieManager(key="query_chemicals_keywords", value=query_chemicals_keywords, nobase64=True)
-        # 5.1.2.[其次 -> 本地] 如果 -> 应用会话 -> 仍不存在用户最近一次搜索化学品的记录
-        if query_chemicals is None:
-            if cookies is not None:
-                if cookies.get("query_chemicals") is not None:
-                    query_chemicals = cookies.get("query_chemicals")
+                if cloud_chemicals_query_items and cloud_chemicals_query_items.get("code") == 200:
+                    chemicals_query_items = json.loads(base64.b64decode(cloud_chemicals_query_items["value"]).decode())
                     # 保存 -> 应用会话 -> 用户最近一次搜索化学品的记录
-                    st.session_state.query_chemicals = query_chemicals
-                    # 如果 -> 已连接坚果云
-                    if jgy is not None:
-                        # 尝试 -> 保存 -> 云端 -> 用户最近一次搜索化学品的记录
-                        jgy.set(param="query_chemicals", value=query_chemicals, nobase64=True)
-                # 搜索关键词同理
-                if cookies.get("query_chemicals_keywords") is not None:
-                    query_chemicals_keywords = cookies.get("query_chemicals_keywords")
-                    st.session_state.query_chemicals_keywords = query_chemicals_keywords
-                    if jgy is not None:
-                        jgy.set(param="query_chemicals_keywords", value=query_chemicals_keywords, nobase64=True)
+                    st.session_state.chemicals_query_items = chemicals_query_items
+                    # 保存 -> 本地 -> 用户最近一次搜索化学品的记录
+                    JSCookieManager(key="chemicals_query_items", value=json.dumps(chemicals_query_items))
+        # 5.3.2.[其次 -> 本地] 如果 -> 应用会话 -> 仍不存在用户最近一次搜索化学品的记录
+        if chemicals_query_items is None:
+            # 如果 -> 本地 -> 存在用户最近一次搜索化学品的记录
+            if cookies is not None and cookies.get("chemicals_query_items") is not None:
+                chemicals_query_items = json.loads(base64.b64decode(cookies.get("chemicals_query_items")).decode())
+                # 保存 -> 应用会话 -> 用户最近一次搜索化学品的记录
+                st.session_state.chemicals_query_items = chemicals_query_items
+                # 如果 -> 已连接坚果云
+                if jgy is not None:
+                    # 尝试 -> 保存 -> 云端 -> 用户最近一次搜索化学品的记录
+                    jgy.set(param="chemicals_query_items", value=json.dumps(chemicals_query_items))
 
         # ****** 6.网页右上角显示 ****** #
         # 6.1名字

@@ -83,6 +83,7 @@ def chemicalsCard(chemical):
                 }
                 .struct-div {
                     grid-column-start: 2;
+                    border-radius: 5px;
                     grid-column-end: 3;
                     grid-row-start: 1;
                     grid-row-end: 9;
@@ -103,9 +104,10 @@ def chemicalsCard(chemical):
                 .struct-img {
                     width: 100%%;
                     height: 100%%;
+                    max-width: 170px;
+                    max-height: 140px;
                     border-radius: 5px;
                     object-fit: contain;
-                    z-index: -1;
                 }
                 .struct-img-alt {
                     height: 20px;
@@ -274,7 +276,9 @@ def chemicalsCard(chemical):
                 </div>
             </script>
             <script type="text/javascript">
+                //放大预览结构式图片
                 function showPic(obj) {
+                    //初始化相册
                     let gall = gallery($(obj).find("img").attr("src"));
                     //相册关闭按钮
                     var close_botton = $("button.weui-hidden_abs.weui-gallery__close");
@@ -287,39 +291,53 @@ def chemicalsCard(chemical):
                     close_botton.remove();
                     //点击任意区域关闭相册
                     $("div.weui-gallery.weui-animate-fade-in").click(function(){gall.hide(function(){})});
-                    //相册外部区域的颜色
+                    //更改相册外部区域的颜色
                     let media = window.top.matchMedia("(prefers-color-scheme:dark)");
                     let prefersDarkMode = media.matches;
+                    //如果是深色模式
                     if (prefersDarkMode) {
-                         $("div.weui-gallery__opr").attr("style", "display:block;opacity:1;background:black");
-                         $("div.weui-gallery.weui-animate-fade-in").attr("style", "display:block;opacity:1;background:black");
+                        //删除区域背景颜色改为黑色
+                        $("div.weui-gallery__opr").attr("style", "display:block;opacity:1;background:black");
+                        //其他区域背景颜色改为黑色
+                        $("div.weui-gallery.weui-animate-fade-in").attr("style", "display:block;opacity:1;background:black");
+                    //如果是亮色模式
                     } else {
-                         $("div.weui-gallery__opr").attr("style", "display:block;opacity:1;background:white")
-                         $("div.weui-gallery.weui-animate-fade-in").attr("style", "display:block;opacity:1;background:white")
+                        //删除区域背景颜色改为白色
+                        $("div.weui-gallery__opr").attr("style", "display:block;opacity:1;background:white")
+                        //其他区域背景颜色改为白色
+                        $("div.weui-gallery.weui-animate-fade-in").attr("style", "display:block;opacity:1;background:white");
                     }
                 }
-
+                
+                //监听深色模式与亮色模式的切换
                 function switchDarkMode() {
                     let media = window.top.matchMedia("(prefers-color-scheme:dark)");
                     let prefersDarkMode = media.matches;
                     if (prefersDarkMode) {
                         //深色模式
+                        //全文的文字改为白色
                         $("body").attr("style", "color:white");
-                        $(".struct-img").attr("style", "background:white");
                     } else {
                         //亮色模式
+                        //全文的文字改为黑色
                         $("body").attr("style", "color:black");
-                        $(".struct-img").attr("style", "background:white");
-                    }
+                    }           
                 }
-
+                
+                //更改 prompts 的样式
                 function modPrompts() {
+                    //确定 改为 复制
                     $(".weui-dialog__btn.primary").text("复制")
+                    //禁止输入
                     $("#weui-prompt-input").attr("disabled", "disabled");
-                    $("#weui-prompt-input").attr("style", "color:black;white-space:pre-line");
+                    //标题文字改为黑色
+                    $(".weui-dialog__title").attr("style", "color:black");
                     $(".weui-prompt-text").attr("style", "color:black");
+                    //输入框内文字改为黑色并允许换行符
+                    $("#weui-prompt-input").attr("style", "color:black;white-space:pre-line");
                 }
-
+                
+                //复制 prompts 内的文本
                 function copy() {
                     var input = window.top.document.createElement("input");
                     window.top.document.body.appendChild(input);
@@ -333,7 +351,8 @@ def chemicalsCard(chemical):
                     }
                     window.top.document.body.removeChild(input);
                 }
-
+                
+                //点击化学品名字时弹窗
                 function showNames(name, enName) {
                     $.prompts({
                         title: name[0],
@@ -343,9 +362,11 @@ def chemicalsCard(chemical):
                         onOK: function (v) {copy()},
                         onCancel: function () {}
                     });
+                    //修改 prompts 样式
                     modPrompts();
                 }
-
+                
+                //点击象形图时弹窗
                 function showGHSMeanings(ghs_pic_index) {
                     var title = chemical["xiangxingtu"][parseInt(ghs_pic_index)];
                     var meaning = chemical["ghs_meanings"][parseInt(ghs_pic_index)];
@@ -357,9 +378,11 @@ def chemicalsCard(chemical):
                         onOK: function (v) {copy()},
                         onCancel: function () {}
                     });
+                    //修改 prompts 样式
                     modPrompts();
                 }
-
+                
+                //点击化学品其他项目时弹窗
                 function showText(name, obj) {
                     $.prompts({
                         title: name,
@@ -369,45 +392,71 @@ def chemicalsCard(chemical):
                         onOK: function (v) {copy()},
                         onCancel: function () {}
                     });
+                    //修改 prompts 样式
                     modPrompts();
                 }
                 
+                //收藏与取消收藏
                 function switchFavorite(obj=null) {
+                    //获取当前化学品的索引
                     var chemical_index = String(chemical.index);
+                    //获取 cookie 中存在的已收藏的化学品的索引序列
                     var favorite_list = $.cookie("chemical_favorites");
+                    //转换为数组形式
                     if (favorite_list) {
                         favorite_list = favorite_list.split(",")
                     } else {
                         favorite_list = new Array();
                     }
+                    //检索当前化学品是否已收藏
                     var is_favorite = $.inArray(chemical_index, favorite_list);
+                    //收藏符号的颜色
                     var path = $(".favorite").find("svg").find("path");
+                    //如果点击了收藏
                     if (obj != null) {
+                        //根据颜色来判断
+                        //如果当前是未收藏, 则执行收藏
                         if (path.attr("fill") == "#bfbfbf") {
+                            //改为已收藏对应的颜色
                             path.attr("fill", "#f4ea2a");
+                            //如果的确不在收藏序列中
                             if (is_favorite == -1) {
+                                //加入收藏序列
                                 favorite_list.push(chemical_index);
+                                //拼接收藏序列为字符串
                                 favorite_list = favorite_list.join(",");
                                 var title = "已加入收藏";
                             }
+                        //如果当前是已收藏, 则执行取消收藏
                         } else {
+                            //改为未收藏对应的颜色
                             path.attr("fill", "#bfbfbf");
+                            //如果的确是已收藏的
                             if (is_favorite > -1) {
+                                //从收藏序列中移除
                                 favorite_list.splice(is_favorite, 1);
+                                //拼接收藏序列为字符串
                                 favorite_list = favorite_list.join(",");
                                 var title = "已取消收藏";
                             }
                         };
+                        //查看是否存在本地云盘配置
                         if ($.cookie("user")) {
                             console.log($.cookie("user"));
+                            //询问是否刷新以同步收藏
                             $.confirm("需要刷新页面才能同步收藏至云端，需要刷新吗？", title, function(){}, function(){window.top.location.reload()});
+                            //更改确认框样式
+                            $(".weui-dialog__btn.default").text("刷新");
+                            $(".weui-dialog__btn.primary").text("稍后");
                         } else {
+                            //直接提示保存本地
                             $.toast(title);
                         }
+                        //保存于本地
                         $.cookie("chemical_favorites", favorite_list);
-                        $(".weui-dialog__btn.default").text("刷新");
-                        $(".weui-dialog__btn.primary").text("稍后");
+                    //如果是页面加载时触发的函数
                     } else {
+                        //直接显示收藏状态
                         if (is_favorite == -1) {
                             path.attr("fill", "#bfbfbf");
                         } else {
@@ -425,27 +474,37 @@ def chemicalsCard(chemical):
                 var chemical = JSON.parse(Base64.decode(`%s`));
                 var html = template("chemical-template", chemical);
                 $("#chemical").html(html);
+                
+                //有多个CAS号时, 监听CAS号的切换事件
                 $(".cas-number > span").select({
                     title: "CAS号",
                     items: chemical["cas_number"],
                     onChange: function(d) {
-                       $.each(chemical["cas_number"], function(cas_index, cas) {
-                            if (cas == d.values) {
-                                $("#cas-number").text(cas);
-                                if (chemical["struct_pic"][cas_index]) {
-                                    $(".struct-img").attr("src", chemical["struct_pic"][cas_index]);
-                                    $("#no-struct_pic").removeClass("hideDom");
-                                    $("#have-struct_pic").removeClass("hideDom");
-                                    $("#no-struct_pic").addClass("hideDom");
-                                } else {
-                                    $("#no-struct_pic").removeClass("hideDom");
-                                    $("#have-struct_pic").removeClass("hideDom");
-                                    $("#have-struct_pic").addClass("hideDom");
-                                }
+                        //获取当前 CAS 号的索引
+                        var cas = d.values;
+                        var cas_index = $.inArray(cas, chemical["cas_number"])
+                        //如果存在该索引
+                        if (cas_index > -1) {
+                            $("#cas-number").text(cas);
+                            //如果该 CAS 号有对应的结构式图片
+                            if (chemical["struct_pic"][cas_index]) {
+                                //更换为当前 CAS 号的结构式图片
+                                $(".struct-img").attr("src", chemical["struct_pic"][cas_index]);
+                                //隐藏无结构式图片的文字提示
+                                $("#no-struct_pic").removeClass("hideDom");
+                                $("#have-struct_pic").removeClass("hideDom");
+                                $("#no-struct_pic").addClass("hideDom");
+                            } else {
+                                //显示无结构式图片的文字提示并隐藏图片位置
+                                $("#no-struct_pic").removeClass("hideDom");
+                                $("#have-struct_pic").removeClass("hideDom");
+                                $("#have-struct_pic").addClass("hideDom");
                             }
-                       })
+                        }
                     },
                 });
+                
+                //显示当前化学品是否已被收藏
                 switchFavorite();
 
                 //深色模式和亮色模式切换
