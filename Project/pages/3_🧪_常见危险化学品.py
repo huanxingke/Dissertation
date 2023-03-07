@@ -33,12 +33,12 @@ if init_result:
         chemicals = load_chemicals()
         qc = QueryChemicals(chemicals=chemicals)
     if chemicals:
-        # st.write(st.session_state)
         st.radio(
             "选择检索方式",
             ("关键词检索", "全部化学品", "查看已收藏"),
             horizontal=True,
-            key="chemicals_query_mode"
+            key="chemicals_query_mode",
+            label_visibility="collapsed"
         )
         if st.session_state.get("chemicals_query_mode") == "全部化学品":
             # 从 session_state 读取选项

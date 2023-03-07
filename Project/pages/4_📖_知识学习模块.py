@@ -9,50 +9,80 @@ from utils.initUserConfig import initUserConfig
 from utils.config import menu_items
 
 
+def dataFile():
+    with open(os.path.join(
+            st.session_state.work_path, "Data", "PDF", "{}.pdf".format(st.session_state.get("knowledges_option"))
+    ), "rb") as pdf:
+        return pdf.read()
+
+
 # ---------- Start:每页基础配置 ---------- #
-st.set_page_config(page_title="知识学习模块", page_icon="📖", layout="wide", menu_items=menu_items)
-st.markdown("### 📖 知识学习模块")
+st.set_page_config(
+    page_title="知识学习模块", page_icon="📖", layout="wide", menu_items=menu_items, initial_sidebar_state="expanded"
+)
 init_result = initUserConfig()
 # ---------- End:每页基础配置 ---------- #
 # 等待初始化完毕
 if init_result:
     # ---------- 以下为页面自定义部分 ---------- #
 
-    pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
-    knowledges = sorted(os.listdir(os.path.join(st.session_state.work_path, "Data", "Knowledges")))
-    knowledges_option = st.selectbox(
-        "选择章节",
-        knowledges,
-        key="knowledges_option"
-    )
+    knowledges = [
+        i.replace(".md", "") for i in sorted(os.listdir(os.path.join(st.session_state.work_path, "Data", "Knowledges")))
+    ]
+    with st.sidebar:
+        knowledges_option = st.selectbox(
+            "选择章节",
+            knowledges,
+            key="knowledges_option"
+        )
+        st.radio(
+            "切换阅读方式",
+            ("Markdown", "图片"),
+            horizontal=True,
+            key="learning_mode"
+        )
+        st.markdown("由于Streamlit对Markdown格式支持有限，如有格式错乱可下载PDF后再阅读学习。")
+        st.download_button(
+            label="下载本节PDF",
+            data=dataFile(),
+            file_name=st.session_state.get("knowledges_option"),
+            mime="application/octet-stream",
+        )
     with st.spinner("加载页面"):
-        with open(os.path.join(st.session_state.work_path, "Data", "Knowledges", st.session_state.get("knowledges_option")), "r", encoding="utf-8") as fp:
-            # 这里增加表格与表格间的间距
-            knowledge = fp.read().replace("</table>", "</table><br/>")
-            # 由于 github 最近访问不稳定且资源文件被墙
-            # 所以转用了 gitee
-            # 但 gitee 存在跨域限制无法直接在网页上访问图片
-            # 所以得一张一张在 python 端请求其图片数据
-            # 其实可以采用其他免费的图片托管平台: https://postimages.org/
-            # 但暂时还是先保留这种方法吧
-            while True:
-                # 如果 markdown 文本中存在图片
-                if pattern.findall(knowledge):
-                    # 获取匹配到的第一张图片, 第一项为图片名字, 第二项为图片链接
-                    img_items = pattern.findall(knowledge)[0]
-                    # 开始以第一张图片分隔整个文本
-                    img = f"![{img_items[0]}]({img_items[1]})"
-                    knowledge_list = knowledge.split(img)
-                    # 首先显示第一项文本内容
-                    st.markdown(knowledge_list[0], unsafe_allow_html=True)
-                    with st.spinner("加载图片"):
-                        # 然后下载图片并显示
-                        img_data = requests.get(url=img_items[1]).content
-                        if img_data:
-                            st.image(img_data)
-                        # 然后对剩下的文本继续执行该步骤
-                        knowledge = knowledge.replace(knowledge_list[0], "").replace(img, "")
-                # 否则直接显示 markdown 文本
-                else:
-                    st.markdown(knowledge, unsafe_allow_html=True)
-                    break
+        # 以 markdown 方式阅读
+        if st.session_state.get("learning_mode") == "Markdown":
+            with open(
+                    os.path.join(
+                        st.session_state.work_path, "Data", "Knowledges",
+                        "{}.md".format(st.session_state.get("knowledges_option"))
+                    ), "r", encoding="utf-8"
+            ) as fp:
+                # 这里增加表格与表格间的间距
+                knowledge = fp.read().replace("</table>", "</table><br/>")
+                # 图片路径
+                img_path = os.path.join(st.session_state.work_path, "Data", "Images", "Knowledges", "{}.png")
+                # 匹配 md 里的图片链接
+                pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
+                # 第一项为图片名, 第二项为链接
+                for img_name, img_src in pattern.findall(knowledge):
+                    # 先还原原文的链接
+                    img_link = "![{}]({})".format(img_name, img_src)
+                    # 从本地获取图片
+                    with open(img_path.format(img_name), "rb") as img:
+                        # 然后转换为 base64 链接
+                        img_src = f"data:image/png;base64,{base64.b64encode(img.read()).decode()}"
+                    # 组合成新的链接
+                    new_img_link = "![{}]({})".format(img_name, img_src)
+                    # 替换掉原来的链接
+                    knowledge = knowledge.replace(img_link, new_img_link)
+                st.markdown(knowledge, unsafe_allow_html=True)
+        # 以图片方式阅读
+        else:
+            knowledges_pics_path = os.path.join(
+                st.session_state.work_path, "Data", "Images", "KnowledgesPics",
+                st.session_state.get("knowledges_option")
+            )
+            knowledges_pics = os.listdir(knowledges_pics_path)
+            for knowledges_pic in knowledges_pics:
+                with open(os.path.join(knowledges_pics_path, knowledges_pic), "rb") as img:
+                    st.image(img.read())
