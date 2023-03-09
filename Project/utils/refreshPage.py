@@ -10,13 +10,14 @@ def refreshPage(alert="null"):
     </head>
     <body>
         <script>
-            //获取父节点
-            var parent = $(window.frameElement).parent();
             //获取根文档
-            var root_document = $(window.frameElement).parents("#root");
-            //隐藏本组件
-            parent.attr("hidedom", "hidedom");
-            root_document.find("[hidedom='hidedom']").hide();
+            var root_document = $(window.top.document);
+            //隐藏该组件
+            $(window.frameElement).parent().hide();
+            //该组件后续的div全显示
+            $(window.frameElement).parent().nextAll().show();
+            //class="stHidden"的div隐藏
+            root_document.find(".stHidden").parent().hide();
             if ("%s" != "null") {
                 alert("%s");
             };

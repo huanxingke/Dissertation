@@ -93,7 +93,7 @@ def hideComponent(component_name="cookie_manager"):
     <body>
         <script>
             //获取根文档
-            var root_document = $(window.frameElement).parents("#root");
+            var root_document = $(window.top.document);
             var components = $(root_document).find("iframe[title*='%s']").parent();
             components.each(function(index, component) {
                 $(component).hide();
@@ -129,13 +129,14 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
             <body>
                 <script>
                     //获取根文档
-                    var root_document = $(window.frameElement).parents("#root");
+                    var root_document = $(window.top.document);
                     //隐藏该组件
                     $(window.frameElement).parent().hide();
                     //该组件后续的div全显示
                     $(window.frameElement).parent().nextAll().show();
                     //class="stHidden"的div隐藏
                     root_document.find(".stHidden").parent().hide();
+                    
                     //设置 cookie
                     try {
                         $.cookie(`%s`, `%s`, { expires: %s, path: "/" });
@@ -155,13 +156,14 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
             <body>
                 <script>
                     //获取根文档
-                    var root_document = $(window.frameElement).parents("#root");
+                    var root_document = $(window.top.document);
                     //隐藏该组件
                     $(window.frameElement).parent().hide();
                     //该组件后续的div全显示
                     $(window.frameElement).parent().nextAll().show();
                     //class="stHidden"的div隐藏
                     root_document.find(".stHidden").parent().hide();
+                    
                     //删除 cookie
                     try {
                         $.removeCookie(`%s`, { path: "/" });
@@ -181,13 +183,14 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
         <body>
             <script>
                 //获取根文档
-                var root_document = $(window.frameElement).parents("#root");
+                var root_document = $(window.top.document);
                 //隐藏该组件
                 $(window.frameElement).parent().hide();
                 //该组件后续的div全显示
                 $(window.frameElement).parent().nextAll().show();
                 //class="stHidden"的div隐藏
                 root_document.find(".stHidden").parent().hide();
+                
                 alert("Cookie键和值只能为非空字符串！")
             </script>
         </body>"""

@@ -418,7 +418,9 @@ def chemicalsCard(chemical):
                     var favorite_list = $.cookie("chemical_favorites");
                     //转换为数组形式
                     if (favorite_list) {
-                        favorite_list = favorite_list.split(",")
+                        favorite_list = favorite_list.split(",");
+                        //去除时间戳
+                        favorite_list.splice(0, 1);
                     } else {
                         favorite_list = new Array();
                     }
@@ -437,10 +439,8 @@ def chemicalsCard(chemical):
                             if (is_favorite == -1) {
                                 //加入收藏序列
                                 favorite_list.push(chemical_index);
-                                //拼接收藏序列为字符串
-                                favorite_list = favorite_list.join(",");
-                                var title = "已加入收藏";
                             }
+                            var title = "已加入收藏";
                         //如果当前是已收藏, 则执行取消收藏
                         } else {
                             //改为未收藏对应的颜色
@@ -449,11 +449,18 @@ def chemicalsCard(chemical):
                             if (is_favorite > -1) {
                                 //从收藏序列中移除
                                 favorite_list.splice(is_favorite, 1);
-                                //拼接收藏序列为字符串
-                                favorite_list = favorite_list.join(",");
-                                var title = "已取消收藏";
                             }
+                            var title = "已取消收藏";
                         };
+                        if (favorite_list.length > 0) {
+                            //拼接收藏序列为字符串
+                            favorite_list = favorite_list.join(",");
+                            //加入时间戳
+                            favorite_list = parseInt(new Date().getTime() / 1000) + "," + favorite_list;
+                        } else {
+                            //直接就是时间戳
+                            favorite_list = parseInt(new Date().getTime() / 1000).toString();
+                        }
                         //查看是否存在本地云盘配置
                         if ($.cookie("user")) {
                             console.log($.cookie("user"));
@@ -467,7 +474,7 @@ def chemicalsCard(chemical):
                             $.toast(title);
                         }
                         //保存于本地
-                        $.cookie("chemical_favorites", favorite_list);
+                        $.cookie("chemical_favorites", favorite_list, { expires: 365, path: "/" });
                     //如果是页面加载时触发的函数
                     } else {
                         //直接显示收藏状态

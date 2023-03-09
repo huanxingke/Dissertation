@@ -6,6 +6,7 @@ import streamlit as st
 import requests
 
 from utils.initUserConfig import initUserConfig
+from utils.learningRate import learningRate
 from utils.config import menu_items
 
 
@@ -39,13 +40,13 @@ if init_result:
             "切换阅读方式",
             ("Markdown", "图片"),
             horizontal=True,
-            key="learning_mode"
+            key="learning_mode",
         )
         st.markdown("由于Streamlit对Markdown格式支持有限，如有格式错乱可下载PDF后再阅读学习。")
         st.download_button(
             label="下载本节PDF",
             data=dataFile(),
-            file_name=st.session_state.get("knowledges_option"),
+            file_name="{}.pdf".format(st.session_state.get("knowledges_option")),
             mime="application/octet-stream",
         )
     with st.spinner("加载页面"):
@@ -72,10 +73,11 @@ if init_result:
                         # 然后转换为 base64 链接
                         img_src = f"data:image/png;base64,{base64.b64encode(img.read()).decode()}"
                     # 组合成新的链接
-                    new_img_link = "![{}]({})".format(img_name, img_src)
+                    new_img_link = "<img style='width:60%' src='{}' alt='{}'/>".format(img_src, img_name)  # "![{}]({})".format(img_name, img_src)
                     # 替换掉原来的链接
                     knowledge = knowledge.replace(img_link, new_img_link)
                 st.markdown(knowledge, unsafe_allow_html=True)
+                learningRate(chapter_index=knowledges.index(st.session_state.get("knowledges_option")))
         # 以图片方式阅读
         else:
             knowledges_pics_path = os.path.join(
@@ -86,3 +88,4 @@ if init_result:
             for knowledges_pic in knowledges_pics:
                 with open(os.path.join(knowledges_pics_path, knowledges_pic), "rb") as img:
                     st.image(img.read())
+            learningRate(chapter_index=knowledges.index(st.session_state.get("knowledges_option")))

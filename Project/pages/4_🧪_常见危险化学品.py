@@ -56,23 +56,26 @@ if init_result:
         elif st.session_state.get("chemicals_query_mode") == "查看已收藏":
             # 检索是否存在收藏
             if st.session_state.get("chemical_favorites"):
-                # 恢复为收藏列表
-                chemical_favorites = st.session_state.get("chemical_favorites").split(",")
-                chemical_favorites_list = []
-                for chemical_index in chemical_favorites:
-                    chemical_favorites_list.append(chemicals[int(chemical_index)])
-                # 从 session_state 读取选项
-                option = st.session_state.get("chemical_favorites_option")
-                option_index = 0
-                if option:
-                    option_index = int(option.split("@")[0]) - 1
-                st.selectbox(
-                    "已收藏化学品",
-                    [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemical_favorites_list)],
-                    key="chemical_favorites_option",
-                    index=option_index
-                )
-                chemicalsCard(chemical_favorites_list[option_index])
+                # 恢复为收藏列表(第0个为时间戳)
+                chemical_favorites = st.session_state.get("chemical_favorites").split(",")[1:]
+                if len(chemical_favorites) > 0:
+                    chemical_favorites_list = []
+                    for chemical_index in chemical_favorites:
+                        chemical_favorites_list.append(chemicals[int(chemical_index)])
+                    # 从 session_state 读取选项
+                    option = st.session_state.get("chemical_favorites_option")
+                    option_index = 0
+                    if option:
+                        option_index = int(option.split("@")[0]) - 1
+                    st.selectbox(
+                        "已收藏化学品",
+                        [f"{i_index + 1}@ {i['name'][0]}" for i_index, i in enumerate(chemical_favorites_list)],
+                        key="chemical_favorites_option",
+                        index=option_index
+                    )
+                    chemicalsCard(chemical_favorites_list[option_index])
+                else:
+                    st.warning("无收藏！")
             else:
                 st.warning("无收藏！")
         else:
