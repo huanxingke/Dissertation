@@ -466,6 +466,9 @@ def chemicalsCard(chemical):
                             console.log($.cookie("user"));
                             //询问是否刷新以同步收藏
                             $.confirm("需要刷新页面才能同步收藏至云端，需要刷新吗？", title, function(){}, function(){window.top.location.reload()});
+                            //标题文字改为黑色
+                            $(".weui-dialog__title").attr("style", "color:black");
+                            $(".weui-dialog__bd").attr("style", "color:black");
                             //更改确认框样式
                             $(".weui-dialog__btn.default").text("刷新");
                             $(".weui-dialog__btn.primary").text("稍后");

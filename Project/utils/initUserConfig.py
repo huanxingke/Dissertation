@@ -174,8 +174,8 @@ def initUserConfig():
         if cookies is not None and cookies.get("learning_cookie") is not None:
             local_learning_cookie = json.loads(base64.b64decode(cookies.get("learning_cookie")).decode())
             if learning_cookie is not None:
-                cloud_learning_cookie_timestamp = learning_cookie["timestamp"]
-                local_learning_cookie_timestamp = local_learning_cookie["timestamp"]
+                cloud_learning_cookie_timestamp = int(learning_cookie["timestamp"])
+                local_learning_cookie_timestamp = int(local_learning_cookie["timestamp"])
                 if local_learning_cookie_timestamp < cloud_learning_cookie_timestamp:
                     # 保存 -> 本地 -> 用户学习进度
                     JSCookieManager(key="learning_cookie", value=json.dumps(learning_cookie))
@@ -184,7 +184,7 @@ def initUserConfig():
                     if jgy is not None:
                         # 尝试 -> 保存 -> 云端 -> 用户学习进度
                         jgy.set(param="learning_cookie", value=json.dumps(learning_cookie))
-                    # 保存 -> 应用会话 -> 用户收藏的化学品
+                    # 保存 -> 应用会话 -> 用户学习进度
                     st.session_state.learning_cookie = learning_cookie
             else:
                 learning_cookie = local_learning_cookie
