@@ -1,15 +1,12 @@
 import json
 import os
 
+from matplotlib import font_manager
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import streamlit as st
 
 from utils.initUserConfig import initUserConfig
 from utils.config import menu_items
-
-
-rcParams["font.family"] = "SimHei"
 
 
 @st.cache_data()
@@ -28,6 +25,12 @@ init_result = initUserConfig()
 if init_result:
     # ---------- 以下为页面自定义部分 ---------- #
 
+    # 加载字体
+    font = font_manager.FontProperties(
+        fname=os.path.join(st.session_state.work_path, "Data", "Fonts", "楷体_GB2312.ttf"),
+        size=12
+    )
+
     # 收藏的化学品
     with st.spinner("正在载入化学品数据..."):
         chemicals = load_chemicals()
@@ -38,8 +41,8 @@ if init_result:
         st.markdown("#### 🧪 已收藏化学品")
         st.slider("已收藏化学品", 0, len(chemicals), chemical_favorites_counts, disabled=True, label_visibility="collapsed")
 
+    # 知识学习进度
     with st.spinner("正在加载学习进度..."):
-        # 知识学习进度
         knowledges = [
             i.replace(".md", "") for i in sorted(os.listdir(os.path.join(st.session_state.work_path, "Data", "Knowledges")))
         ]
@@ -58,6 +61,7 @@ if init_result:
         ax = plt.gca()
         ax.xaxis.set_major_locator(plt.MultipleLocator(10))
         ax.invert_yaxis()
+        plt.yticks(fontproperties=font)
         rects = plt.barh(knowledges, knowledges_learning_rate, height=0.3)
         for rect in rects:
             width = rect.get_width()
