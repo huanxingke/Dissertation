@@ -49,7 +49,9 @@ def learningRate(chapter_index):
             //初始化进度条
             var learning_rate = parseInt(learning_cookie[learning_mode][chapter]);
             var section = $(window.top.document).find("section[tabindex=0]")[0];
-            console.log($(section))
+            console.log($(window.top.document).find("section[tabindex=0]"))
+            console.log($(window.frameElement).parent().parents().find("#root").find("section[tabindex=0]"))
+            console.log($(window.frameElement).parents().find("#root").find("section[tabindex=0]"))
             $(section).scrollTop(section.scrollHeight * learning_rate / 100 - section.clientHeight);
             $(window.top.document).find("#progress").css("width", (2 * learning_rate).toString() + "px");
             if (learning_rate == 100) {
