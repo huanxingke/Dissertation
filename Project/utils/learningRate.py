@@ -12,6 +12,7 @@ def learningRate(chapter_index):
     </head>
     <body>
         <script>
+            console.log($(window.top.document))
             //隐藏该组件
             $(window.frameElement).parent().hide();
             //该组件后续的div全显示
