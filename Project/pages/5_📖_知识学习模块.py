@@ -84,7 +84,7 @@ if init_result:
                 st.session_state.work_path, "Data", "Images", "KnowledgesPics",
                 st.session_state.get("knowledges_option")
             )
-            knowledges_pics = os.listdir(knowledges_pics_path)
+            knowledges_pics = sorted(os.listdir(knowledges_pics_path))
             for knowledges_pic in knowledges_pics:
                 with open(os.path.join(knowledges_pics_path, knowledges_pic), "rb") as img:
                     st.image(img.read())

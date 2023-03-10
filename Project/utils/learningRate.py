@@ -36,6 +36,7 @@ def learningRate(chapter_index):
                     learning_cookie[learning_mode][chapter] = 0;
                 }
             }
+            console.log(learning_cookie);
             
             //进度条功能区
             var progress_box = $(window.frameElement).parents().find("#root").find("#progress-box");
@@ -81,6 +82,7 @@ def learningRate(chapter_index):
                 $(section).scrollTop(0);
                 learning_cookie["timestamp"] = parseInt(new Date().getTime() / 1000);
                 learning_cookie[learning_mode][chapter] = learning_rate;
+                console.log(learning_cookie);
                 var cookie_string = Base64.encode(JSON.stringify(learning_cookie));
                 $.cookie("learning_cookie", cookie_string, { expires: 365, path: "/" });
             });
