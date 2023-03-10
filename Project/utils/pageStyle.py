@@ -58,7 +58,7 @@ def pageStyle():
             //主菜单增加几个按钮
             function addActionButton(color, id, text, href="javascript:void(0);", func="") {
                 if (root_document.find("#" + id).length > 0) {
-                    return
+                    root_document.find("#" + id).remove();
                 }
                 var action_a = window.top.document.createElement("a");
                 $(action_a).css("color", color);
