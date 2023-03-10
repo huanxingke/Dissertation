@@ -10,7 +10,7 @@ def addActionButton(action_id, action_text, action_href="javascript:void(0);", a
     <body>
         <script>
             //获取根文档
-            var root_document = $(window.top.document);
+            var root_document = $(window.frameElement).parents().find("#root");
             //隐藏该组件
             $(window.frameElement).parent().hide();
             //该组件后续的div全显示

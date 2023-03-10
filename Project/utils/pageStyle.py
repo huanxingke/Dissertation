@@ -73,7 +73,7 @@ def pageStyle():
             }
             
             //获取根文档
-            var root_document = $(window.top.document);
+            var root_document = $(window.frameElement).parents().find("#root");
             //隐藏该组件
             $(window.frameElement).parent().hide();
             //该组件后续的div全显示
@@ -82,7 +82,7 @@ def pageStyle():
             //root_document.find(".stHidden").parent().hide();
             
             //进度条功能区删除
-            var progress_box = $(window.top.document).find("#progress-box");
+            var progress_box = $(window.frameElement).parents().find("#root").find("#progress-box");
             if (progress_box.length > 0) {
                 progress_box.remove();
             }

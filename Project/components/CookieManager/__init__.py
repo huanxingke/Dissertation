@@ -93,7 +93,7 @@ def hideComponent(component_name="cookie_manager"):
     <body>
         <script>
             //获取根文档
-            var root_document = $(window.top.document);
+            var root_document = $(window.frameElement).parents().find("#root");
             var components = $(root_document).find("iframe[title*='%s']").parent();
             components.each(function(index, component) {
                 $(component).hide();
@@ -129,7 +129,7 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
             <body>
                 <script>
                     //获取根文档
-                    var root_document = $(window.top.document);
+                    var root_document = $(window.frameElement).parents().find("#root");
                     //隐藏该组件
                     $(window.frameElement).parent().hide();
                     //该组件后续的div全显示
@@ -156,7 +156,7 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
             <body>
                 <script>
                     //获取根文档
-                    var root_document = $(window.top.document);
+                    var root_document = $(window.frameElement).parents().find("#root");
                     //隐藏该组件
                     $(window.frameElement).parent().hide();
                     //该组件后续的div全显示
@@ -183,7 +183,7 @@ def JSCookieManager(key, value="", delete=False, expires=365, senseless=True, no
         <body>
             <script>
                 //获取根文档
-                var root_document = $(window.top.document);
+                var root_document = $(window.frameElement).parents().find("#root");
                 //隐藏该组件
                 $(window.frameElement).parent().hide();
                 //该组件后续的div全显示
